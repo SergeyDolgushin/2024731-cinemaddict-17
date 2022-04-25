@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
-* Студент: [Сергей Долгушин](https://up.htmlacademy.ru/ecmascript/17/user/2024731).
-* Наставник: `Неизвестно`.
+* Студент: [Сергей Долгушин](https://htmlacademy.ru/profile/id2024731).
+* Наставник: [Сергей Карпов](https://htmlacademy.ru/profile/id518893).
 
 ---
 
