@@ -20,7 +20,7 @@ const createNewFilms = () => '<article class="film-card">\
 </div>\
 </article>';
 
-export default class NewFilmView {
+export default class FilmView {
   getTemplate() {
     return createNewFilms();
   }

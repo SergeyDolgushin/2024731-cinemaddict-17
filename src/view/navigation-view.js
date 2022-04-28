@@ -7,7 +7,7 @@ const createNewUser = () => '<nav class="main-navigation">\
 <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>\
 </nav>';
 
-export default class NewNavigationView {
+export default class NavigationView {
   getTemplate() {
     return createNewUser();
   }

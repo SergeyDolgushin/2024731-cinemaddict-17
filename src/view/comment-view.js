@@ -14,7 +14,7 @@ const createNewComment = () => `<li class="film-details__comment">
 </div>
 </li>`;
 
-export default class NewCommentView {
+export default class CommentView {
   getTemplate() {
     return createNewComment();
   }

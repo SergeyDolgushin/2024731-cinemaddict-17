@@ -65,9 +65,6 @@ const createNewPopup = () => `<section class="film-details">
       </div>
     </div>
 
-    <section class="film-details__controls">
-
-    </section>
   </div>
 
   <div class="film-details__bottom-container">
@@ -85,16 +82,13 @@ const createNewPopup = () => `<section class="film-details">
           <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
         </label>
 
-        <div class="film-details__emoji-list">
-
-        </div>
       </div>
     </section>
   </div>
 </form>
 </section>`;
 
-export default class NewPopupView {
+export default class PopupView {
   getTemplate() {
     return createNewPopup();
   }

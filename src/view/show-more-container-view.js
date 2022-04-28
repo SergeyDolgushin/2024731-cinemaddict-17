@@ -1,17 +1,20 @@
 import {createElement} from '../render.js';
 
-export default class NewShowMoreContainerView {
-  init = (parameters) => {
-    this.container = `<section class="films-list films-list--extra">
-    <h2 class="films-list__title">${parameters.title}</h2>
-    <div class="films-list__container">
-    </div>
+const createTemplate = (parameters) => `<section class="films-list films-list--extra">
+  <h2 class="films-list__title">${parameters.title}</h2>
+  <div class="films-list__container">
+  </div>
   </section>`;
-  };
+
+export default class ShowMoreContainerView {
+
+  constructor(parameters) {
+    this.parameters = parameters;
+  }
 
   getTemplate() {
 
-    return this.container;
+    return createTemplate(this.parameters);
   }
 
   getElement() {

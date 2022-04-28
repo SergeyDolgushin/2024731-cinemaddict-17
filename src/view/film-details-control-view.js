@@ -1,13 +1,15 @@
 import {createElement} from '../render.js';
 
-export default class NewControlView {
-  init = (parameters) => {
-    this.button = `<button type="button" class="${parameters.class}" id="${parameters.id}" name="${parameters.name}">${parameters.caption}</button>`;
-  };
+const createNewPopup = () => `<section class="film-details__controls">
+<button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+<button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+<button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+</section>`;
 
+export default class NewControlView {
   getTemplate() {
 
-    return this.button;
+    return createNewPopup();
   }
 
   getElement() {
