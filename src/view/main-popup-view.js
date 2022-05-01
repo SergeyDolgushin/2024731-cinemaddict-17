@@ -1,92 +1,94 @@
 import {createElement} from '../render.js';
 
-const createNewPopup = () => `<section class="film-details">
-<form class="film-details__inner" action="" method="get">
-  <div class="film-details__top-container">
-    <div class="film-details__close">
-      <button class="film-details__close-btn" type="button">close</button>
-    </div>
-    <div class="film-details__info-wrap">
-      <div class="film-details__poster">
-        <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
+const createNewPopup = () => (
+  `<section class="film-details">
+    <form class="film-details__inner" action="" method="get">
+      <div class="film-details__top-container">
+        <div class="film-details__close">
+          <button class="film-details__close-btn" type="button">close</button>
+        </div>
+        <div class="film-details__info-wrap">
+          <div class="film-details__poster">
+            <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
 
-        <p class="film-details__age">18+</p>
-      </div>
-
-      <div class="film-details__info">
-        <div class="film-details__info-head">
-          <div class="film-details__title-wrap">
-            <h3 class="film-details__title">The Great Flamarion</h3>
-            <p class="film-details__title-original">Original: The Great Flamarion</p>
+            <p class="film-details__age">18+</p>
           </div>
 
-          <div class="film-details__rating">
-            <p class="film-details__total-rating">8.9</p>
+          <div class="film-details__info">
+            <div class="film-details__info-head">
+              <div class="film-details__title-wrap">
+                <h3 class="film-details__title">The Great Flamarion</h3>
+                <p class="film-details__title-original">Original: The Great Flamarion</p>
+              </div>
+
+              <div class="film-details__rating">
+                <p class="film-details__total-rating">8.9</p>
+              </div>
+            </div>
+
+            <table class="film-details__table">
+              <tr class="film-details__row">
+                <td class="film-details__term">Director</td>
+                <td class="film-details__cell">Anthony Mann</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">Writers</td>
+                <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">Actors</td>
+                <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">Release Date</td>
+                <td class="film-details__cell">30 March 1945</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">Runtime</td>
+                <td class="film-details__cell">1h 18m</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">Country</td>
+                <td class="film-details__cell">USA</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">Genres</td>
+                <td class="film-details__cell">
+                  <span class="film-details__genre">Drama</span>
+                  <span class="film-details__genre">Film-Noir</span>
+                  <span class="film-details__genre">Mystery</span></td>
+              </tr>
+            </table>
+
+            <p class="film-details__film-description">
+              The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The Great Flamarion (Erich von Stroheim) is an arrogant, friendless, and misogynous marksman who displays his trick gunshot act in the vaudeville circuit. His show features a beautiful assistant, Connie (Mary Beth Hughes) and her drunken husband Al (Dan Duryea), Flamarion's other assistant. Flamarion falls in love with Connie, the movie's femme fatale, and is soon manipulated by her into killing her no good husband during one of their acts.
+            </p>
           </div>
         </div>
 
-        <table class="film-details__table">
-          <tr class="film-details__row">
-            <td class="film-details__term">Director</td>
-            <td class="film-details__cell">Anthony Mann</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">30 March 1945</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">1h 18m</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Country</td>
-            <td class="film-details__cell">USA</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Genres</td>
-            <td class="film-details__cell">
-              <span class="film-details__genre">Drama</span>
-              <span class="film-details__genre">Film-Noir</span>
-              <span class="film-details__genre">Mystery</span></td>
-          </tr>
-        </table>
-
-        <p class="film-details__film-description">
-          The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The Great Flamarion (Erich von Stroheim) is an arrogant, friendless, and misogynous marksman who displays his trick gunshot act in the vaudeville circuit. His show features a beautiful assistant, Connie (Mary Beth Hughes) and her drunken husband Al (Dan Duryea), Flamarion's other assistant. Flamarion falls in love with Connie, the movie's femme fatale, and is soon manipulated by her into killing her no good husband during one of their acts.
-        </p>
       </div>
-    </div>
 
-  </div>
+      <div class="film-details__bottom-container">
+        <section class="film-details__comments-wrap">
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
 
-  <div class="film-details__bottom-container">
-    <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+          <ul class="film-details__comments-list">
 
-      <ul class="film-details__comments-list">
+          </ul>
 
-      </ul>
+          <div class="film-details__new-comment">
+            <div class="film-details__add-emoji-label"></div>
 
-      <div class="film-details__new-comment">
-        <div class="film-details__add-emoji-label"></div>
+            <label class="film-details__comment-label">
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            </label>
 
-        <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-        </label>
-
+          </div>
+        </section>
       </div>
-    </section>
-  </div>
-</form>
-</section>`;
+    </form>
+</section>`
+);
 
 export default class PopupView {
   getTemplate() {
