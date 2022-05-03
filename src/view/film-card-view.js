@@ -28,7 +28,6 @@ export default class FilmView {
   }
 
   getTemplate() {
-    console.log(this.filmCards);
     return createFilmsTemplate(this.filmCards);
   }
 
