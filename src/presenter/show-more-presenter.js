@@ -1,7 +1,7 @@
-import ShowMoreContainerView from '../view/show-more-container-view.js';
-import NewFilmView from '../view/film-card-view.js';
+import ExtraFilmsContainerView from '../view/extra-container-view.js';
+import FilmView from '../view/film-card-view.js';
 
-import {render} from '../render.js';
+import { render } from '../render.js';
 
 const topRated = {
   title: 'Top rated',
@@ -15,17 +15,19 @@ const mostCommented = {
 
 const showMoreInstances = [topRated, mostCommented];
 
-export default class ShowMorePresenter {
+export default class ExtraFilmsPresenter {
 
-  init = (mainContainer) => {
+  init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
+    this.filmsModel = filmsModel;
+    this.filmCards = [...this.filmsModel.getCurrentCards()];
 
     const mainSection = this.mainContainer.querySelector('.films');
     for (const item of showMoreInstances) {
-      const showMoreInstance = new ShowMoreContainerView(item);
+      const showMoreInstance = new ExtraFilmsContainerView(item);
       render(showMoreInstance, mainSection);
       const placeShowMoreFilm = showMoreInstance.getElement(item).querySelector('.films-list__container');
-      render(new NewFilmView(), placeShowMoreFilm);
+      render(new FilmView(this.filmCards[0]), placeShowMoreFilm);
     }
   };
 }

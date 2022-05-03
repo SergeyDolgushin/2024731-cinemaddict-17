@@ -8,14 +8,16 @@ const TITLES = [
   'Made for Each Other'
 ];
 
+const PATH_TO_IMAGE = './images/posters/';
+
 const POSTERS = [
-  './images/posters/made-for-each-other.png',
-  './images/posters/popeye-meets-sinbad.png',
-  './images/posters/sagebrush-trail.jpg',
-  './images/posters/santa-claus-conquers-the-martians.jpg',
-  './images/posters/the-dance-of-life.jpg',
-  './images/posters/the-great-flamarion.jpg',
-  './images/posters/the-man-with-the-golden-arm.jpg',
+  `${PATH_TO_IMAGE}made-for-each-other.png`,
+  `${PATH_TO_IMAGE}popeye-meets-sinbad.png`,
+  `${PATH_TO_IMAGE}sagebrush-trail.jpg`,
+  `${PATH_TO_IMAGE}santa-claus-conquers-the-martians.jpg`,
+  `${PATH_TO_IMAGE}the-dance-of-life.jpg`,
+  `${PATH_TO_IMAGE}the-great-flamarion.jpg`,
+  `${PATH_TO_IMAGE}the-man-with-the-golden-arm.jpg`,
 ];
 
 const DIRECTORS = [
@@ -37,6 +39,9 @@ const ACTORS = [
   'Silvester Stallone',
   'Bruce Willice',
   'Tom Cruise',
+  'Erich von Stroheim',
+  'Mary Beth Hughes',
+  'Dan Duryea'
 ];
 
 const RELEASE_COUNTRY = [
@@ -61,4 +66,26 @@ const DESCRIPTIONS = [
   'In this short, Sindbad the Sailor (presumably Bluto playing a "role") proclaims himself, in song, to be the greatest sailor, adventurer'
 ];
 
-export { TITLES, POSTERS, DIRECTORS, WRITERS, ACTORS, RELEASE_COUNTRY, GENRE, DESCRIPTIONS };
+const COMMENTS = [
+  'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
+  'Bad',
+  'Good',
+  'Not bad',
+  'Not good'
+];
+
+const COMMENTS_AUTORS = [
+  'Ilya Reilly',
+  'NoName',
+  'Bruce Cruise',
+  'Tom 1999',
+];
+
+const EMOJIES = [
+  'smile',
+  'sleeping',
+  'puke',
+  'angry',
+];
+
+export { TITLES, POSTERS, DIRECTORS, WRITERS, ACTORS, RELEASE_COUNTRY, GENRE, DESCRIPTIONS, COMMENTS, COMMENTS_AUTORS, EMOJIES };

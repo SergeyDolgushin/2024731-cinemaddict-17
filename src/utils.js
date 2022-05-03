@@ -16,4 +16,12 @@ function getRandomFloat(min, max, decimalPlace) {
   return -1;
 }
 
-export { getRandomInteger, getRandomFloat };
+const convertTimeDuration = (minute) => {
+
+  const hourDuration = Math.floor(minute / 60);
+  const minuteDuration = minute % 60;
+
+  return `${hourDuration}h ${minuteDuration}m`;
+};
+
+export { getRandomInteger, getRandomFloat, convertTimeDuration };

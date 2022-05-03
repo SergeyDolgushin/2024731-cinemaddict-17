@@ -11,17 +11,17 @@ export default class MainPresenter {
   filmsSection = new FilmsListSectionView();
   filmsContainer = new FilmsListContainerView();
 
-  init = (mainContainer, tasksModel) => {
+  init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
-    this.tasksModel = tasksModel;
-    this.filmTasks = [...this.tasksModel.getTasks()];
+    this.filmsModel = filmsModel;
+    this.filmCards = [...this.filmsModel.getNewCards()];
 
     render(this.mainFilmsSection, this.mainContainer);
     render(this.filmsSection, this.mainFilmsSection.getElement());
     render(this.filmsContainer, this.filmsSection.getElement());
 
-    for (let i = 0; i < this.filmTasks.length; i++) {
-      render(new FilmView(this.filmTasks[i]), this.filmsContainer.getElement());
+    for (let i = 0; i < this.filmCards.length; i++) {
+      render(new FilmView(this.filmCards[i]), this.filmsContainer.getElement());
     }
 
     render(new ShowMoreButtonView(), this.filmsSection.getElement());
