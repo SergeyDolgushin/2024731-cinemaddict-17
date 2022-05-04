@@ -7,7 +7,7 @@ const createUserProfileTemplate = () => (
   </section>`
 );
 
-export default class ShowUserProfileView {
+export default class UserProfileView {
   getTemplate() {
 
     return createUserProfileTemplate();

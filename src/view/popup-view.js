@@ -140,7 +140,6 @@ const getComments = (filmCard, filmsComments) => {
 };
 
 export default class PopupView {
-
   constructor(filmCard, filmsComments) {
     this.filmCard = filmCard;
     this.filmComments = getComments(filmCard, filmsComments);

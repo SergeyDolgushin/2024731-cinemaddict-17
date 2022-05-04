@@ -1,8 +1,7 @@
-import PopupView from '../view/main-popup-view.js';
+import PopupView from '../view/popup-view.js';
 import { render } from '../render.js';
 
 export default class PopupPresenter {
-
   init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
     this.filmsModel = filmsModel;

@@ -1,4 +1,4 @@
-import ShowUserProfileView from './view/user-view.js';
+import UserProfileView from './view/user-profile-view.js';
 import FiltersView from './view/filter-view.js';
 import NavigationView from './view/navigation-view.js';
 import { render, RenderPosition } from './render.js';
@@ -15,7 +15,7 @@ const popupPresenter = new PopupPresenter();
 const extraFilmsPresenter = new ExtraFilmsPresenter();
 const filmCardsModel = new FilmCardsModel();
 
-render(new ShowUserProfileView(), siteHeaderElement);
+render(new UserProfileView(), siteHeaderElement);
 render(new NavigationView(), siteMainElement, RenderPosition.AFTERBEGIN);
 render(new FiltersView(), siteMainElement);
 mainPresenter.init(siteMainElement, filmCardsModel);

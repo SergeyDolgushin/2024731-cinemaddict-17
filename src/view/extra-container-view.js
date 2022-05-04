@@ -9,7 +9,6 @@ const createExtraFilmContainerTemplate = (parameters) => (
 );
 
 export default class ExtraFilmsContainerView {
-
   constructor(parameters) {
     this.parameters = parameters;
   }

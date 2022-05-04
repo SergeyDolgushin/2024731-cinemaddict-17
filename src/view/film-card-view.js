@@ -22,7 +22,7 @@ const createFilmsTemplate = (filmCards) => (
   </article>`
 );
 
-export default class FilmView {
+export default class FilmCardView {
   constructor(filmCards) {
     this.filmCards = filmCards;
   }

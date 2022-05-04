@@ -16,7 +16,6 @@ const mostCommented = {
 const showMoreInstances = [topRated, mostCommented];
 
 export default class ExtraFilmsPresenter {
-
   init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
     this.filmsModel = filmsModel;
