@@ -1,29 +1,20 @@
-import { generateFilmInfo, generateComments } from '../mock/films-comments.js';
+import { generateFilmInfo } from '../mock/films-comments.js';
 import { getRandomInteger } from '../utils.js';
 
-const addCommentsToFilm = (films, comments) => {
-  let arrayCommentsId = [];
-
-  for (const film of films) {
-    for (let i = 0; i < comments.length; i++) {
-      arrayCommentsId.push(comments[i].id);
-    }
-    const maxNumberComments = getRandomInteger(1, comments.length);
-    film.comments = arrayCommentsId.slice(1, maxNumberComments);
-    arrayCommentsId = [];
-  }
-  return films;
-};
-
-
 export default class FilmCardsModel {
-  comments = generateComments();
   films = Array.from({ length: 10 }, generateFilmInfo);
+  constructor(comments) {
+    this.comments = comments;
+  }
 
-  getNewCards = () => addCommentsToFilm(this.films, this.comments);
+  addComments = (element) => {
+    const maxQuantity = this.comments.length;
+    const maxRange = Math.floor(maxQuantity / 3);
+    const minRange = 0;
+    const maxInterval = getRandomInteger(minRange, maxRange);
+    element.comments = this.comments.slice(0, maxInterval);
+    this.comments = this.comments.slice(maxInterval, maxQuantity);
+  };
 
-  getCurrentCards = () => this.films;
-
-  getCurrentComments = () => this.comments;
-
+  getCards = () => this.films.map(this.addComments);
 }

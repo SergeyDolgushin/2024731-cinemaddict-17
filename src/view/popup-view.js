@@ -1,6 +1,28 @@
 import { createElement } from '../render.js';
 
-const createPopupTemplate = (filmCard, filmComments) => (
+const createCommentTemplate = (film) => {
+  const listComments = [];
+  film.comments.forEach((element) => {
+    listComments.push(
+      `<li class="film-details__comment">
+            <span class="film-details__comment-emoji">
+              <img src="./images/emoji/${element.emotion}.png" width="55" height="55" alt="emoji-smile">
+            </span>
+            <div>
+              <p class="film-details__comment-text">${element.comment}</p>
+              <p class="film-details__comment-info">
+                <span class="film-details__comment-author">${element.author}</span>
+                <span class="film-details__comment-day">${element.date}</span>
+                <button class="film-details__comment-delete">Delete</button>
+              </p>
+            </div>
+          </li>`
+    );
+  });
+  return listComments.join('');
+};
+
+const createPopupTemplate = (filmCard, listComments) => (
   `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__top-container">
@@ -73,22 +95,10 @@ const createPopupTemplate = (filmCard, filmComments) => (
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmCard.comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-          <li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-            </span>
-            <div>
-              <p class="film-details__comment-text">${filmComments[0].comment}</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">${filmComments[0].author}</span>
-                <span class="film-details__comment-day">${filmComments[0].date}</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>
+          ${listComments}
         </ul>
 
         <div class="film-details__new-comment">
@@ -126,27 +136,15 @@ const createPopupTemplate = (filmCard, filmComments) => (
 </section>`
 );
 
-const getComments = (filmCard, filmsComments) => {
-  const filmComments = [];
-
-  for (const comment of filmsComments) {
-    for (const commentId of filmCard.comments) {
-      if (commentId === comment.id) {
-        filmComments.push(comment);
-      }
-    }
-  }
-  return filmComments;
-};
-
 export default class PopupView {
   constructor(filmCard, filmsComments) {
     this.filmCard = filmCard;
-    this.filmComments = getComments(filmCard, filmsComments);
+    this.filmComments = filmsComments;
   }
 
   getTemplate() {
-    return createPopupTemplate(this.filmCard, this.filmComments);
+    const listComments = createCommentTemplate(this.filmCard, this.filmComments);
+    return createPopupTemplate(this.filmCard, listComments);
   }
 
   getElement() {

@@ -8,17 +8,6 @@ const getRandomArrayElement = (descriptions) => {
   return descriptions[randomIndex];
 };
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = arr[j];
-    arr[j] = arr[i];
-    arr[i] = temp;
-  }
-
-  return arr;
-}
-
 const generateComment = (_element, indexId) => (
   {
     id: indexId,
@@ -28,15 +17,6 @@ const generateComment = (_element, indexId) => (
     emotion: getRandomArrayElement(EMOJIES)
   }
 );
-
-const generateComments = () => {
-  const minRangeQunatity = 50;
-  const maxRangeQunatity = 100;
-  const quantityComments = getRandomInteger(minRangeQunatity, maxRangeQunatity);
-  const comments = Array.from({ length: quantityComments }, generateComment);
-  const randomComments = shuffle(comments);
-  return randomComments;
-};
 
 const generateFilmInfo = (_element, index) => {
   const date = new Date();
@@ -74,4 +54,4 @@ const generateFilmInfo = (_element, index) => {
 };
 
 
-export { generateFilmInfo, generateComments };
+export { generateFilmInfo, generateComment };

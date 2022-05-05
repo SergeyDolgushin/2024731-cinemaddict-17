@@ -14,12 +14,11 @@ export default class MainPresenter {
   init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
     this.filmsModel = filmsModel;
-    this.filmCards = [...this.filmsModel.getNewCards()];
+    this.filmCards = [...this.filmsModel.films];
 
     render(this.mainFilmsSection, this.mainContainer);
     render(this.filmsSection, this.mainFilmsSection.getElement());
     render(this.filmsContainer, this.filmsSection.getElement());
-
     for (let i = 0; i < this.filmCards.length; i++) {
       render(new FilmCardView(this.filmCards[i]), this.filmsContainer.getElement());
     }

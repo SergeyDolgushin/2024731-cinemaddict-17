@@ -24,4 +24,8 @@ const convertTimeDuration = (minute) => {
   return `${hourDuration}h ${minuteDuration}m`;
 };
 
-export { getRandomInteger, getRandomFloat, convertTimeDuration };
+function shuffle(arr) {
+  return arr.sort(() => (Math.random() - .5));
+}
+
+export { getRandomInteger, getRandomFloat, convertTimeDuration, shuffle };
