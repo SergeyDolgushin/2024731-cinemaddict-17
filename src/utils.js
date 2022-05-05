@@ -24,8 +24,17 @@ const convertTimeDuration = (minute) => {
   return `${hourDuration}h ${minuteDuration}m`;
 };
 
-function shuffle(arr) {
-  return arr.sort(() => (Math.random() - .5));
-}
+const generateId = () => {
+  let currentId = 0;
+  return () => currentId++;
+};
 
-export { getRandomInteger, getRandomFloat, convertTimeDuration, shuffle };
+const getRandomArrayElement = (array) => {
+  const randomIndex = getRandomInteger(0, array.length - 1);
+
+  return array[randomIndex];
+};
+
+const getRandomBoolean = () => Boolean(getRandomInteger(0, 1));
+
+export { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean };

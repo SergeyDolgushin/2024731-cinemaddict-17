@@ -1,16 +1,11 @@
-import { getRandomInteger, getRandomFloat, convertTimeDuration } from '../utils.js';
+import { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean } from '../utils.js';
 import { TITLES, POSTERS, DIRECTORS, WRITERS, ACTORS, RELEASE_COUNTRY, GENRE, DESCRIPTIONS, COMMENTS, COMMENTS_AUTORS, EMOJIES } from './const-film-temp.js';
 
-const getRandomArrayElement = (descriptions) => {
+const commentID = generateId();
 
-  const randomIndex = getRandomInteger(0, descriptions.length - 1);
-
-  return descriptions[randomIndex];
-};
-
-const generateComment = (_element, indexId) => (
+const generateComment = () => (
   {
-    id: indexId,
+    id: commentID(),
     author: getRandomArrayElement(COMMENTS_AUTORS),
     comment: getRandomArrayElement(COMMENTS),
     date: new Date(),
@@ -18,13 +13,15 @@ const generateComment = (_element, indexId) => (
   }
 );
 
-const generateFilmInfo = (_element, index) => {
+const generateFilmInfo = (id, commentsModel) => {
   const date = new Date();
   const randomDuration = getRandomInteger(60, 300);
+  const filmComments = Array.from({ length: getRandomInteger(0, 5) }, generateComment);
+  commentsModel.addComments(filmComments);
 
   return {
-    id: index,
-    comments: [],
+    id,
+    comments: filmComments.map((comment) => comment.id),
     filmInfo: {
       title: getRandomArrayElement(TITLES),
       alternativeTitle: getRandomArrayElement(TITLES),
@@ -44,10 +41,10 @@ const generateFilmInfo = (_element, index) => {
         description: getRandomArrayElement(DESCRIPTIONS)
       },
       userDetails: {
-        watchlist: Boolean(getRandomInteger(0, 1)),
-        alreadyWatched: Boolean(getRandomInteger(0, 1)),
+        watchlist: getRandomBoolean(),
+        alreadyWatched: getRandomBoolean(),
         watchingDate: date.getFullYear(),
-        favorite: Boolean(getRandomInteger(0, 1)),
+        favorite: getRandomBoolean(),
       }
     }
   };
