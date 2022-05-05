@@ -1,10 +1,10 @@
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
 
-const createNewTaskButtonTemplate = () => '<button class="films-list__show-more">Show more</button>';
+const createTaskButtonTemplate = () => '<button class="films-list__show-more">Show more</button>';
 
-export default class NewShowMoreButtonView {
+export default class ShowMoreButtonView {
   getTemplate() {
-    return createNewTaskButtonTemplate();
+    return createTaskButtonTemplate();
   }
 
   getElement() {

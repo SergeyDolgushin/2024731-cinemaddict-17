@@ -1,12 +1,14 @@
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
 
-const createNewSection = () => '<section class="films-list">\
-<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>\
-</section>';
+const createSectionTemplate = () => (
+  '<section class="films-list">\
+    <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>\
+  </section>'
+);
 
-export default class NewFilmsListSectionView {
+export default class FilmsListSectionView {
   getTemplate() {
-    return createNewSection();
+    return createSectionTemplate();
   }
 
   getElement() {
