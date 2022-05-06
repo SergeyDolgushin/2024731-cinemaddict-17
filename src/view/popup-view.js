@@ -1,4 +1,5 @@
 import { createElement } from '../render.js';
+import { setActiveClass, humanizeDateTime } from '../utils.js';
 
 const createCommentTemplate = (film, comments) => {
   const listComments = [];
@@ -13,7 +14,7 @@ const createCommentTemplate = (film, comments) => {
                 <p class="film-details__comment-text">${comment.comment}</p>
                 <p class="film-details__comment-info">
                   <span class="film-details__comment-author">${comment.author}</span>
-                  <span class="film-details__comment-day">${comment.date}</span>
+                  <span class="film-details__comment-day">${humanizeDateTime(comment.date)}</span>
                   <button class="film-details__comment-delete">Delete</button>
                 </p>
               </div>
@@ -25,9 +26,12 @@ const createCommentTemplate = (film, comments) => {
 };
 
 const createPopupTemplate = (filmCard, listComments) => {
-  const addActiveButtonClassWatchlist = (filmCard.filmInfo.userDetails.watchlist) ? 'film-details__control-button--active' : '';
-  const addActiveButtonClassAlreadyWatched = (filmCard.filmInfo.userDetails.alreadyWatched) ? 'film-details__control-button--active' : '';
-  const addActiveButtonClassFavorite = (filmCard.filmInfo.userDetails.favorite) ? 'film-details__control-button--active' : '';
+  const activeClass = 'film-details__control-button--active';
+  const userDetails = filmCard.filmInfo.userDetails;
+
+  const activeClassButtonWatchlist = setActiveClass(userDetails.watchlist, activeClass);
+  const activeClassButtonAlreadyWatched = setActiveClass(userDetails.alreadyWatched, activeClass);
+  const activeClassButtonFavorite = setActiveClass(userDetails.favorite, activeClass);
 
   return (
     `<section class="film-details">
@@ -94,9 +98,9 @@ const createPopupTemplate = (filmCard, listComments) => {
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="${addActiveButtonClassWatchlist} film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="${addActiveButtonClassAlreadyWatched} film-details__control-button film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-          <button type="button" class="${addActiveButtonClassFavorite} film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+          <button type="button" class="${activeClassButtonWatchlist} film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+          <button type="button" class="${activeClassButtonAlreadyWatched} film-details__control-button film-details__control-button--watched" id="watched" name="watched">Already watched</button>
+          <button type="button" class="${activeClassButtonFavorite} film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
 
