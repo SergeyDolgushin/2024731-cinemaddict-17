@@ -1,6 +1,6 @@
 import { render, RenderPosition } from './render.js';
-import CommentsModel from './model/comment-model.js';
-import FilmCardsModel from './model/film-model.js';
+import CommentsModel from './model/comments-model.js';
+import FilmCardsModel from './model/films-model.js';
 import NavigationView from './view/navigation-view.js';
 import MainPresenter from './presenter/main-presenter.js';
 import ExtraFilmsPresenter from './presenter/extra-films-presenter.js';
