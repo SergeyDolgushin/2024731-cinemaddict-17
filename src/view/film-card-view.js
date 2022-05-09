@@ -1,9 +1,9 @@
 import { createElement } from '../render.js';
 import { setActiveClass } from '../utils.js';
 
-const createFilmsTemplate = (filmCards) => {
+const createFilmsTemplate = (filmCard) => {
   const activeClass = 'film-card__controls-item--active';
-  const userDetails = filmCards.filmInfo.userDetails;
+  const userDetails = filmCard.filmInfo.userDetails;
 
   const activeClassButtonWatchlist = setActiveClass(userDetails.watchlist, activeClass);
   const activeClassButtonAlreadyWatched = setActiveClass(userDetails.alreadyWatched, activeClass);
@@ -12,16 +12,16 @@ const createFilmsTemplate = (filmCards) => {
   return (
     `<article class="film-card">
       <a class="film-card__link">
-        <h3 class="film-card__title">${filmCards.filmInfo.title}</h3>
-        <p class="film-card__rating">${filmCards.filmInfo.totalRating}</p>
+        <h3 class="film-card__title">${filmCard.filmInfo.title}</h3>
+        <p class="film-card__rating">${filmCard.filmInfo.totalRating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${filmCards.filmInfo.release.date}</span>
+          <span class="film-card__year">${filmCard.filmInfo.release.date}</span>
           <span class="film-card__duration">1h 55m</span>
-          <span class="film-card__genre">${filmCards.filmInfo.filmInfo.genre}</span>
+          <span class="film-card__genre">${filmCard.filmInfo.genre}</span>
         </p>
-        <img src="${filmCards.filmInfo.poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${filmCards.filmInfo.filmInfo.description}</p>
-        <span class="film-card__comments">${filmCards.comments.length} comments</span>
+        <img src="${filmCard.filmInfo.poster}" alt="" class="film-card__poster">
+        <p class="film-card__description">${filmCard.filmInfo.description}</p>
+        <span class="film-card__comments">${filmCard.comments.length} comments</span>
       </a>
       <div class="film-card__controls">
         <button class="${activeClassButtonWatchlist} film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
@@ -33,12 +33,12 @@ const createFilmsTemplate = (filmCards) => {
 };
 
 export default class FilmCardView {
-  constructor(filmCards) {
-    this.filmCards = filmCards;
+  constructor(filmCard) {
+    this.filmCard = filmCard;
   }
 
   getTemplate() {
-    return createFilmsTemplate(this.filmCards);
+    return createFilmsTemplate(this.filmCard);
   }
 
   getElement() {

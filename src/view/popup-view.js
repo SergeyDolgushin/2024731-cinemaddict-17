@@ -78,7 +78,7 @@ const createPopupTemplate = (filmCard, listComments) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${filmCard.filmInfo.filmInfo.runtime}</td>
+                <td class="film-details__cell">${filmCard.filmInfo.runtime}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -87,12 +87,12 @@ const createPopupTemplate = (filmCard, listComments) => {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">${filmCard.filmInfo.filmInfo.genre}</span>
+                  <span class="film-details__genre">${filmCard.filmInfo.genre}</span>
               </tr>
             </table>
 
             <p class="film-details__film-description">
-            ${filmCard.filmInfo.filmInfo.description}
+            ${filmCard.filmInfo.description}
             </p>
           </div>
         </div>

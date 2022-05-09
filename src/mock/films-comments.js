@@ -1,11 +1,11 @@
 import { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean } from '../utils.js';
 import { TITLES, POSTERS, DIRECTORS, WRITERS, ACTORS, RELEASE_COUNTRY, GENRE, DESCRIPTIONS, COMMENTS, COMMENTS_AUTORS, EMOJIES } from './const-film-temp.js';
 
-const commentID = generateId();
+const generateCommentID = generateId();
 
 const generateComment = () => (
   {
-    id: commentID(),
+    id: generateCommentID(),
     author: getRandomArrayElement(COMMENTS_AUTORS),
     comment: getRandomArrayElement(COMMENTS),
     date: new Date(),
@@ -35,11 +35,9 @@ const generateFilmInfo = (id, commentsModel) => {
         date: date.getFullYear(),
         releaseCountry: getRandomArrayElement(RELEASE_COUNTRY)
       },
-      filmInfo: {
-        runtime: convertTimeDuration(randomDuration),
-        genre: [getRandomArrayElement(GENRE)],
-        description: getRandomArrayElement(DESCRIPTIONS)
-      },
+      runtime: convertTimeDuration(randomDuration),
+      genre: [getRandomArrayElement(GENRE)],
+      description: getRandomArrayElement(DESCRIPTIONS),
       userDetails: {
         watchlist: getRandomBoolean(),
         alreadyWatched: getRandomBoolean(),
