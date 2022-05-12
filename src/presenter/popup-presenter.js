@@ -1,14 +1,33 @@
-import PopupView from '../view/popup-view.js';
 import { render } from '../render.js';
+import PopupView from '../view/popup-view.js';
 
 export default class PopupPresenter {
-  init = (mainContainer, filmsModel, commentsModel) => {
-    this.mainContainer = mainContainer;
-    this.filmsModel = filmsModel;
-    this.filmCards = [...this.filmsModel.films];
-    this.commentsModel = commentsModel;
-    this.filmComments = [...this.commentsModel.comments];
+  #renderPopup = (card, comments) => {
+    const popupView = new PopupView(card, comments);
 
-    render(new PopupView(this.filmCards[0], this.filmComments), this.mainContainer);
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        popupView.element.remove();
+        popupView.removeElement();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    render(popupView, this.mainContainer);
+    popupView.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
+      popupView.element.remove();
+      popupView.removeElement();
+    });
+    document.addEventListener('keydown', onEscKeyDown);
+  };
+
+  init = (mainContainer, filmModel, commentsModel) => {
+    this.mainContainer = mainContainer;
+    this.filmModel = filmModel;
+    this.filmCard = this.filmModel;
+    this.commentsModel = commentsModel;
+    this.filmComments = [...this.commentsModel];
+    this.#renderPopup(this.filmCard, this.filmComments);
   };
 }

@@ -1,7 +1,6 @@
+import { render } from '../render.js';
 import ExtraFilmsContainerView from '../view/extra-container-view.js';
 import FilmView from '../view/film-card-view.js';
-
-import { render } from '../render.js';
 
 const topRated = {
   title: 'Top rated',
@@ -19,7 +18,7 @@ export default class ExtraFilmsPresenter {
   init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
     this.filmsModel = filmsModel;
-    this.filmCards = [...this.filmsModel.films];
+    this.filmCards = [...this.filmsModel];
 
     const mainSection = this.mainContainer.querySelector('.films');
     for (const item of showMoreInstances) {
