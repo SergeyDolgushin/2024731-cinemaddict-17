@@ -1,7 +1,8 @@
 import { generateFilmInfo } from '../mock/films-comments.js';
 import { getRandomInteger } from '../utils.js';
+
 const MIN_QUANTITY_FILMS = 0;
-const MAX_QUANTITY_FILMS = 13;
+const MAX_QUANTITY_FILMS = 32;
 
 export default class FilmCardsModel {
   constructor(CommentsModel) {

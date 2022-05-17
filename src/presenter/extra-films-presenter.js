@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 import ExtraFilmsContainerView from '../view/extra-container-view.js';
 import FilmView from '../view/film-card-view.js';
 
@@ -15,17 +15,21 @@ const mostCommented = {
 const showMoreInstances = [topRated, mostCommented];
 
 export default class ExtraFilmsPresenter {
+  #filmCards = null;
+
   init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
     this.filmsModel = filmsModel;
-    this.filmCards = [...this.filmsModel];
 
-    const mainSection = this.mainContainer.querySelector('.films');
-    for (const item of showMoreInstances) {
-      const showMoreInstance = new ExtraFilmsContainerView(item);
-      render(showMoreInstance, mainSection);
-      const placeShowMoreFilm = showMoreInstance.getElement(item).querySelector('.films-list__container');
-      render(new FilmView(this.filmCards[0]), placeShowMoreFilm);
+    if (this.filmsModel.length > 0) {
+      this.#filmCards = this.filmsModel.reduce((acc, curr) => acc.filmInfo.totalRating > curr.filmInfo.totalRating ? acc : curr);
+      const mainSection = this.mainContainer.querySelector('.films');
+      for (const item of showMoreInstances) {
+        const showMoreInstance = new ExtraFilmsContainerView(item);
+        render(showMoreInstance, mainSection);
+        const placeShowMoreFilm = showMoreInstance.element.querySelector('.films-list__container');
+        render(new FilmView(this.#filmCards), placeShowMoreFilm);
+      }
     }
   };
 }

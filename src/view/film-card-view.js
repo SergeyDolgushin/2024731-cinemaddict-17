@@ -1,10 +1,10 @@
-import { createElement } from '../render.js';
 import { setActiveClass } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmsTemplate = (filmCard) => {
   const activeClass = 'film-card__controls-item--active';
   const userDetails = filmCard.filmInfo.userDetails;
-  const { title, totalRating, genre, description, poster, release } = filmCard.filmInfo;
+  const { title, totalRating, genre, description, poster, release, runtime } = filmCard.filmInfo;
 
   const activeClassButtonWatchlist = setActiveClass(userDetails.watchlist, activeClass);
   const activeClassButtonAlreadyWatched = setActiveClass(userDetails.alreadyWatched, activeClass);
@@ -17,7 +17,7 @@ const createFilmsTemplate = (filmCard) => {
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
           <span class="film-card__year">${release.date}</span>
-          <span class="film-card__duration">1h 55m</span>
+          <span class="film-card__duration">${runtime}</span>
           <span class="film-card__genre">${genre}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
@@ -33,24 +33,57 @@ const createFilmsTemplate = (filmCard) => {
   );
 };
 
-export default class FilmCardView {
+export default class FilmCardView extends AbstractView {
+  #filmCard = null;
+
   constructor(filmCard) {
-    this.filmCard = filmCard;
+    super();
+    this.#filmCard = filmCard;
   }
 
-  getTemplate() {
-    return createFilmsTemplate(this.filmCard);
+  get template() {
+    return createFilmsTemplate(this.#filmCard);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-card__poster').addEventListener('click', this.#clickHandler);
+  };
 
-    return this.element;
-  }
+  #clickHandler = () => {
+    this._callback.click();
+  };
 
-  removeElement() {
-    this.element = null;
-  }
+  #setWatchlistHandler = (callback) => {
+    this._callback.clickWatchList = callback;
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#clickWatchlistHandler);
+  };
+
+  #clickWatchlistHandler = () => {
+    this._callback.clickWatchList();
+  };
+
+  #setWatchedHandler = (callback) => {
+    this._callback.clickWatched = callback;
+    this.element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this.#clickWatchedHandler);
+  };
+
+  #clickWatchedHandler = () => {
+    this._callback.clickWatched();
+  };
+
+  #setFavoriteHandler = (callback) => {
+    this._callback.clickFavorite = callback;
+    this.element.querySelector('.film-card__controls-item--favorite').addEventListener('click', this.#clickFavoriteHandler);
+  };
+
+  #clickFavoriteHandler = () => {
+    this._callback.clickFavorite();
+  };
+
+  setPreferenceButtons = (cbWatchlist, cbWatched, cbFavorite) => {
+    this.#setWatchlistHandler(cbWatchlist);
+    this.#setWatchedHandler(cbWatched);
+    this.#setFavoriteHandler(cbFavorite);
+  };
 }

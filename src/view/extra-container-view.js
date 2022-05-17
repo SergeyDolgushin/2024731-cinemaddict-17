@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createExtraFilmContainerTemplate = (parameters) => (
   `<section class="films-list films-list--extra">
@@ -8,25 +8,16 @@ const createExtraFilmContainerTemplate = (parameters) => (
   </section>`
 );
 
-export default class ExtraFilmsContainerView {
+export default class ExtraFilmsContainerView extends AbstractView {
+  #parameters = null;
+
   constructor(parameters) {
-    this.parameters = parameters;
+    super();
+    this.#parameters = parameters;
   }
 
-  getTemplate() {
+  get template() {
 
-    return createExtraFilmContainerTemplate(this.parameters);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+    return createExtraFilmContainerTemplate(this.#parameters);
   }
 }

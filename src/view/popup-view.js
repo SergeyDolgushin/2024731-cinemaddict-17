@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
 import { setActiveClass, humanizeDateTime } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createCommentTemplate = (film, comments) => {
   const listComments = [];
@@ -148,26 +148,64 @@ const createPopupTemplate = (filmCard, listComments) => {
   );
 };
 
-export default class PopupView {
+export default class PopupView extends AbstractView {
+  #filmCard = null;
+  #filmComments = null;
+
   constructor(filmCard, filmsComments) {
-    this.filmCard = filmCard;
-    this.filmComments = filmsComments;
+    super();
+    this.#filmCard = filmCard;
+    this.#filmComments = filmsComments;
   }
 
-  getTemplate() {
-    const listComments = createCommentTemplate(this.filmCard, this.filmComments);
-    return createPopupTemplate(this.filmCard, listComments);
+  get template() {
+    const listComments = createCommentTemplate(this.#filmCard, this.#filmComments);
+
+    return createPopupTemplate(this.#filmCard, listComments);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  };
 
-    return this.element;
-  }
+  setPreferenceButtons = (cbWatchlist, cbWatched, cbFavorite) => {
+    this.#setWatchlistHandler(cbWatchlist);
+    this.#setWatchedHandler(cbWatched);
+    this.#setFavoriteHandler(cbFavorite);
+  };
 
-  removeElement() {
-    this.element = null;
-  }
+  #clickHandler = () => {
+    this._callback.click();
+  };
+
+  #setWatchlistHandler = (callback) => {
+    this._callback.clickWatchList = callback;
+    this.element.querySelector('.film-details__control-button--watchlist')
+      .addEventListener('click', this.#clickWatchlistHandler);
+  };
+
+  #clickWatchlistHandler = () => {
+    this._callback.clickWatchList();
+  };
+
+  #setWatchedHandler = (callback) => {
+    this._callback.clickWatched = callback;
+    this.element.querySelector('.film-details__control-button--watched')
+      .addEventListener('click', this.#clickWatchedHandler);
+  };
+
+  #clickWatchedHandler = () => {
+    this._callback.clickWatched();
+  };
+
+  #setFavoriteHandler = (callback) => {
+    this._callback.clickFavorite = callback;
+    this.element.querySelector('.film-details__control-button--favorite')
+      .addEventListener('click', this.#clickFavoriteHandler);
+  };
+
+  #clickFavoriteHandler = () => {
+    this._callback.clickFavorite();
+  };
 }

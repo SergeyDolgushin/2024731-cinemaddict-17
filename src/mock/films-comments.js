@@ -1,7 +1,16 @@
-import { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean } from '../utils.js';
+import dayjs from 'dayjs';
+import { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean, getYear } from '../utils.js';
 import { TITLES, POSTERS, DIRECTORS, WRITERS, ACTORS, RELEASE_COUNTRY, GENRE, DESCRIPTIONS, COMMENTS, COMMENTS_AUTORS, EMOJIES } from './const-film-temp.js';
 
 const generateCommentID = generateId();
+
+const generateDate = () => {
+  const minYearGap = -50;
+  const currYearGap = 0;
+  const yearGap = getRandomInteger(minYearGap, currYearGap);
+
+  return dayjs().add(yearGap, 'year').toDate();
+};
 
 const generateComment = () => (
   {
@@ -32,7 +41,7 @@ const generateFilmInfo = (id, commentsModel) => {
       writers: [getRandomArrayElement(WRITERS), getRandomArrayElement(DIRECTORS)],
       actors: [getRandomArrayElement(ACTORS), getRandomArrayElement(WRITERS)],
       release: {
-        date: date.getFullYear(),
+        date: getYear(generateDate()),
         releaseCountry: getRandomArrayElement(RELEASE_COUNTRY)
       },
       runtime: convertTimeDuration(randomDuration),

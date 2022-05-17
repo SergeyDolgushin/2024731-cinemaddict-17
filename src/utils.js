@@ -31,11 +31,7 @@ const generateId = () => {
   return () => currentId++;
 };
 
-const getRandomArrayElement = (array) => {
-  const randomIndex = getRandomInteger(0, array.length - 1);
-
-  return array[randomIndex];
-};
+const getRandomArrayElement = (array) => array[getRandomInteger(0, array.length - 1)];
 
 const getRandomBoolean = () => Boolean(getRandomInteger(0, 1));
 
@@ -45,4 +41,20 @@ const humanizeDateTime = (dueDate) => dayjs(dueDate).format('YYYY/MM/DD HH:mm');
 
 const setActiveClass = (isActive, activeClass) => isActive ? activeClass : '';
 
-export { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean, setActiveClass, getYear, humanizeDate, humanizeDateTime };
+const compareProperties = (a, b) => b > a;
+
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
+
+export { getRandomInteger, getRandomFloat, convertTimeDuration, generateId, getRandomArrayElement, getRandomBoolean, setActiveClass, getYear, humanizeDate, humanizeDateTime, compareProperties, updateItem };
