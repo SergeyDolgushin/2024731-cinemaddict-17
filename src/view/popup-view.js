@@ -1,12 +1,12 @@
 import { setActiveClass, humanizeDateTime } from '../utils.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import { generateComment } from '../mock/films-comments.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
-const createCommentTemplate = (film, comments) => {
+const createCommentTemplate = (film) => {
   const listComments = [];
-  comments.forEach((comment) => {
-    if (film.comments.includes(comment.id)) {
-      listComments.push(
-        `<li class="film-details__comment">
+  film.currentComments.forEach((comment) => {
+    listComments.push(
+      `<li class="film-details__comment">
               <span class="film-details__comment-emoji">
                 <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-smile">
               </span>
@@ -19,9 +19,9 @@ const createCommentTemplate = (film, comments) => {
                 </p>
               </div>
             </li>`
-      );
-    }
+    );
   });
+
   return listComments.join('');
 };
 
@@ -148,20 +148,21 @@ const createPopupTemplate = (filmCard, listComments) => {
   );
 };
 
-export default class PopupView extends AbstractView {
-  #filmCard = null;
-  #filmComments = null;
+export default class PopupView extends AbstractStatefulView {
+  _state = null;
+  #emojiesElements = null;
 
   constructor(filmCard, filmsComments) {
     super();
-    this.#filmCard = filmCard;
-    this.#filmComments = filmsComments;
+    this._state = PopupView.convertInputDataToState(filmCard, filmsComments);
+    this.#setInnerHandlers();
+    this.#sendNewComment();
   }
 
   get template() {
-    const listComments = createCommentTemplate(this.#filmCard, this.#filmComments);
+    const listComments = createCommentTemplate(this._state);
 
-    return createPopupTemplate(this.#filmCard, listComments);
+    return createPopupTemplate(this._state, listComments);
   }
 
   setClickHandler = (callback) => {
@@ -173,6 +174,29 @@ export default class PopupView extends AbstractView {
     this.#setWatchlistHandler(cbWatchlist);
     this.#setWatchedHandler(cbWatched);
     this.#setFavoriteHandler(cbFavorite);
+  };
+
+  static convertInputDataToState = (filmCard, filmsComments) => {
+    const state = { ...filmCard };
+    state.currentComments = [];
+    state.currentCommentsNumber = state.comments.length;
+    filmsComments.forEach((comment) => {
+      if (state.comments.includes(comment.id)) {
+        state.currentComments.push(comment);
+      }
+    });
+    return state;
+  };
+
+  static convertStateToOutputData = (state) => {
+    const filmCard = { ...state };
+    let filmComment = null;
+    if (state.currentCommentsNumber > state.comments.length) {
+      filmComment = state.currentComments.at(-1);
+    }
+    delete filmCard.currentComments;
+    delete filmCard.currentCommentsNumber;
+    return { filmCard, filmComment };
   };
 
   #clickHandler = () => {
@@ -207,5 +231,65 @@ export default class PopupView extends AbstractView {
 
   #clickFavoriteHandler = () => {
     this._callback.clickFavorite();
+  };
+
+  #selectEmojiHandler = (evt) => {
+    const urlEmojie = `<img src="./images/emoji/${evt.target.value}.png" width="55" height="55" alt="${evt.target.id}"></img>`;
+    const emojieContainer = this.element.querySelector('.film-details__add-emoji-label');
+    evt.preventDefault();
+    if (emojieContainer.firstChild !== null) {
+      emojieContainer.removeChild(emojieContainer.firstChild);
+    }
+    emojieContainer.insertAdjacentHTML('afterbegin', urlEmojie);
+    this._setState({
+      userCommentEmojie: evt.target.value,
+    });
+  };
+
+  #setInnerHandlers = () => {
+    this.#emojiesElements = this.element.querySelectorAll('.film-details__emoji-item');
+    this.#emojiesElements.forEach((element) => element.addEventListener('click', this.#selectEmojiHandler));
+    this.element.querySelector('.film-details__comment-input')
+      .addEventListener('input', this.#commentInputHandler);
+  };
+
+  #commentInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      userComment: evt.target.value,
+    });
+  };
+
+  #sendNewComment = () => {
+    let arrKeyCode = [];
+    document.addEventListener('keydown', (evt) => {
+      if (evt.repeat) {
+        return;
+      }
+      arrKeyCode.push(evt.code);
+    });
+
+    document.addEventListener('keyup', (evt) => {
+      if (arrKeyCode.includes('ControlLeft') && arrKeyCode.includes('Enter') && arrKeyCode.includes(evt.code)) {
+        const tempComment = generateComment();
+        tempComment.comment = this._state.userComment;
+        tempComment.emotion = this._state.userCommentEmojie;
+        this._state.currentComments.push(tempComment);
+        arrKeyCode = [];
+        this.updateElement(
+          this._state.currentComments
+        );
+      }
+    });
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.#sendNewComment();
+    this.setPreferenceButtons(
+      this._callback.clickWatchList,
+      this._callback.clickWatched,
+      this._callback.clickFavorite
+    );
   };
 }
