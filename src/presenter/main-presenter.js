@@ -3,7 +3,6 @@ import { updateItem } from '../utils.js';
 import { sortDateDown, sortRateDown } from '../utils/sorting.js';
 import { filter } from '../utils/filter.js';
 import { SortType, FilterType } from '../const.js';
-import { generateFilter } from '../mock/filter.js';
 import FilmCardPresenter from './film-card-presenter.js';
 import SortMenuView from '../view/sort-meny-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
@@ -41,8 +40,8 @@ export default class MainPresenter {
 
   init = (mainContainer) => {
     this.mainContainer = mainContainer;
-    this.#filters = generateFilter(this.filmCards);
-    this.#sortMenuView = new SortMenuView(this.#filters);
+    // this.#filters = generateFilter(this.filmCards);
+    this.#sortMenuView = new SortMenuView(this.filmCards);
     render(this.#sortMenuView, this.mainContainer, RenderPosition.AFTERBEGIN);
     this.#NavigationElement = document.querySelector('.main-navigation');
     this.#renderFilmsContainer();
@@ -124,8 +123,8 @@ export default class MainPresenter {
     this.#currentFilterType = filterType;
   };
 
-  #handleFilterTypeChange = (filterType) => {
-    if (this.#currentFilterType === filterType) {
+  #handleFilterTypeChange = (filterType, state) => {
+    if (this.#currentFilterType === filterType && state) {
       return;
     }
     this.#filterFilms(filterType);
@@ -135,10 +134,9 @@ export default class MainPresenter {
 
   #refreshFilteredList = () => {
     if (this.#sortMenuView.currentActiveFilter === this.#currentActiveFilter) {
-      this.#filters = generateFilter(this.#originalFilmsCards);
-      this.#sortMenuView.refreshState(this.#filters);
       this.#filterFilms(this.#sortMenuView.currentActiveFilter);
-      // this.#refreshFilmsList();
+      this.#sortMenuView.refreshState(this.#originalFilmsCards);
+      this.#refreshFilmsList();
     }
     this.#currentActiveFilter = this.#sortMenuView.currentActiveFilter;
   };

@@ -1,7 +1,7 @@
 const FilterType = {
   ALL: 'default',
   WATCHLIST: 'watchlist',
-  ALREADYWATCHED: 'alreadyWatched',
+  ALREADYWATCHED: 'alreadywatched',
   FAVORITE: 'favorite',
 };
 

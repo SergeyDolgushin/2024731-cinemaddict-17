@@ -292,4 +292,5 @@ export default class PopupView extends AbstractStatefulView {
       this._callback.clickFavorite
     );
   };
+
 }
