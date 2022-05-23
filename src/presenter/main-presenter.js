@@ -33,6 +33,7 @@ export default class MainPresenter {
   #filters = null;
   #currentActiveFilter = null;
   popupPresenter = null;
+  #aciveSortOrder = null;
 
   constructor(filmsModel, commentsModel) {
     this.#originalFilmsCards = [...filmsModel];
@@ -88,6 +89,7 @@ export default class MainPresenter {
   };
 
   #sortFilms = (sortType) => {
+    this.#aciveSortOrder = sortType;
     switch (sortType) {
       case SortType.SORT_DATE:
         this.filmCards.sort(sortDateDown);
@@ -129,6 +131,8 @@ export default class MainPresenter {
         break;
       default:
         this.filmCards = [...this.#originalFilmsCards];
+        this.#sortFilms(this.#aciveSortOrder);
+
     }
 
     this.#currentFilterType = filterType;
@@ -147,7 +151,6 @@ export default class MainPresenter {
     if (this.#sortMenuView.currentActiveFilter === this.#currentActiveFilter) {
       this.#filterFilms(this.#sortMenuView.currentActiveFilter);
       this.#sortMenuView.refreshState(this.#originalFilmsCards);
-      // this.#refreshFilmsList();
     }
     this.#currentActiveFilter = this.#sortMenuView.currentActiveFilter;
   };
