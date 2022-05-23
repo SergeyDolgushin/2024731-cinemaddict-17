@@ -11,4 +11,11 @@ const SortType = {
   SORT_RATE: 'rating',
 };
 
-export { FilterType, SortType };
+const infoType = {
+  'default': 'There are no movies in our database',
+  'watchlist': 'There are no movies to watch now',
+  'alreadywatched': 'There are no watched movies now',
+  'favorite': 'There are no favorite movies now',
+};
+
+export { FilterType, SortType, infoType };

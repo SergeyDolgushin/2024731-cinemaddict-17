@@ -33,7 +33,9 @@ export default class MainPresenter {
   #filters = null;
   #currentActiveFilter = null;
   popupPresenter = null;
-  #aciveSortOrder = null;
+  #activeSortOrder = null;
+  #activeFilter = 'default';
+  #emptyListView = null;
 
   constructor(filmsModel, commentsModel) {
     this.#originalFilmsCards = [...filmsModel];
@@ -45,6 +47,7 @@ export default class MainPresenter {
   init = (mainContainer) => {
     this.mainContainer = mainContainer;
     this.#sortMenuView = new SortMenuView(this.filmCards);
+    this.#emptyListView = new EmptyListView(this.#activeFilter);
     render(this.#sortMenuView, this.mainContainer, RenderPosition.AFTERBEGIN);
     this.#NavigationElement = document.querySelector('.main-navigation');
     this.#renderFilmsContainer();
@@ -89,7 +92,7 @@ export default class MainPresenter {
   };
 
   #sortFilms = (sortType) => {
-    this.#aciveSortOrder = sortType;
+    this.#activeSortOrder = sortType;
     switch (sortType) {
       case SortType.SORT_DATE:
         this.filmCards.sort(sortDateDown);
@@ -119,6 +122,7 @@ export default class MainPresenter {
   };
 
   #filterFilms = (filterType) => {
+    this.#activeFilter = filterType;
     switch (filterType) {
       case FilterType.WATCHLIST:
         this.filmCards = [...filter[FilterType.WATCHLIST](this.filmCards)];
@@ -131,8 +135,8 @@ export default class MainPresenter {
         break;
       default:
         this.filmCards = [...this.#originalFilmsCards];
-        this.#sortFilms(this.#aciveSortOrder);
-
+        this.#sortFilms(this.#activeSortOrder);
+        this.#removeEmptyListView();
     }
 
     this.#currentFilterType = filterType;
@@ -143,6 +147,11 @@ export default class MainPresenter {
       return;
     }
     this.#filterFilms(filterType);
+    if (this.filmCards.length === 0) {
+      this.#clearFilmsList();
+      this.#renderEmptyList();
+      return;
+    }
     this.#refreshFilmsList();
     this.#currentActiveFilter = this.#sortMenuView.currentActiveFilter;
   };
@@ -229,7 +238,13 @@ export default class MainPresenter {
   };
 
   #renderEmptyList = () => {
-    render(new EmptyListView(), this.#filmsContainer.element);
+    this.#emptyListView.init(this.#activeFilter);
+    render(this.#emptyListView, this.#filmsContainer.element);
+  };
+
+  #removeEmptyListView = () => {
+    remove(this.#emptyListView);
+    this.#emptyListView.removeElement();
   };
 
 }
