@@ -35,10 +35,12 @@ const createFilmsTemplate = (filmCard) => {
 
 export default class FilmCardView extends AbstractView {
   #filmCard = null;
+  #comments = null;
 
-  constructor(filmCard) {
+  constructor(filmCard, comments) {
     super();
     this.#filmCard = filmCard;
+    this.#comments = comments;
   }
 
   get template() {
@@ -51,7 +53,7 @@ export default class FilmCardView extends AbstractView {
   };
 
   #clickHandler = () => {
-    this._callback.click();
+    this._callback.click(this.#filmCard, this.#comments);
   };
 
   #setWatchlistHandler = (callback) => {

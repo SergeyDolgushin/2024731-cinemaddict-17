@@ -6,24 +6,26 @@ export default class PopupPresenter {
   #changeCard = null;
   #mainContainer = null;
   #popupView = null;
+  #changeComment = null;
 
-  constructor(mainContainer, changeCard) {
+  constructor(changeCard, changeComment) {
     this.#changeCard = changeCard;
-    this.#mainContainer = mainContainer;
+    this.#changeComment = changeComment;
   }
 
-  init = (filmModel, commentsModel) => {
+  init = (filmModel, commentsModel, mainContainer) => {
+    this.#mainContainer = mainContainer;
     this.#card = filmModel;
     this.commentsModel = commentsModel;
     this.filmComments = [...this.commentsModel];
     const prevPopupView = this.#popupView;
-
     this.#renderPopup(prevPopupView);
     this.#popupView.setPreferenceButtons(this.#handleWatchlistClick, this.#handleAlreadyWatchedClick, this.#handleFavoriteClick);
   };
 
   #renderPopup = (prevPopupView) => {
     this.#popupView = new PopupView(this.#card, this.filmComments);
+    this.#popupView.sendNewComment(this.#changeComment);
     const handlePopupCloseButton = () => {
       remove(this.#popupView);
     };

@@ -9,10 +9,12 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import FilmsSectionView from '../view/main-films-section-view.js';
 import FilmsListSectionView from '../view/films-list-section-view.js';
 import FilmsListContainerView from '../view/films-list-container-view.js';
+import PopupPresenter from './popup-presenter.js';
 import FiltersView from '../view/filter-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 
 const FILMS_COUNT_PER_ROW = 5;
+const siteMainElement = document.querySelector('.main');
 
 export default class MainPresenter {
   #mainFilmsSection = new FilmsSectionView();
@@ -30,6 +32,7 @@ export default class MainPresenter {
   #NavigationElement = null;
   #filters = null;
   #currentActiveFilter = null;
+  popupPresenter = null;
 
   constructor(filmsModel, commentsModel) {
     this.#originalFilmsCards = [...filmsModel];
@@ -40,7 +43,6 @@ export default class MainPresenter {
 
   init = (mainContainer) => {
     this.mainContainer = mainContainer;
-    // this.#filters = generateFilter(this.filmCards);
     this.#sortMenuView = new SortMenuView(this.filmCards);
     render(this.#sortMenuView, this.mainContainer, RenderPosition.AFTERBEGIN);
     this.#NavigationElement = document.querySelector('.main-navigation');
@@ -69,6 +71,15 @@ export default class MainPresenter {
     this.#filmPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.filmComments);
     this.#refreshFilteredList();
   };
+
+  #handleCommentChange = (updatedFilmCard, updatedComments) => {
+    this.filmCards = updateItem(this.filmCards, updatedFilmCard);
+    this.filmComments = updatedComments;
+    this.#originalFilmsCards = updateItem(this.#originalFilmsCards, updatedFilmCard);
+    this.#filmPresenter.get(updatedFilmCard.id).init(updatedFilmCard, this.filmComments);
+    this.#refreshFilteredList();
+  };
+
 
   #renderFilmsContainer = () => {
     render(this.#mainFilmsSection, this.mainContainer);
@@ -136,7 +147,7 @@ export default class MainPresenter {
     if (this.#sortMenuView.currentActiveFilter === this.#currentActiveFilter) {
       this.#filterFilms(this.#sortMenuView.currentActiveFilter);
       this.#sortMenuView.refreshState(this.#originalFilmsCards);
-      this.#refreshFilmsList();
+      // this.#refreshFilmsList();
     }
     this.#currentActiveFilter = this.#sortMenuView.currentActiveFilter;
   };
@@ -152,7 +163,13 @@ export default class MainPresenter {
   };
 
   #renderFilmCard = (filmCard) => {
-    this.#filmCardPresenter = new FilmCardPresenter(this.#filmsContainer, this.#handleCardChange, this.#isPopupOpen);
+    this.#filmCardPresenter = new FilmCardPresenter(
+      this.#filmsContainer,
+      this.#handleCardChange,
+      this.#isPopupOpen,
+      this.#newPopupHandler,
+      this.#refreshPopup
+    );
     this.#filmCardPresenter.init(filmCard, this.filmComments);
     this.#filmPresenter.set(filmCard.id, this.#filmCardPresenter);
   };
@@ -179,14 +196,27 @@ export default class MainPresenter {
   };
 
   #isPopupOpen = () => {
-    for (const value of this.#filmPresenter.values()) {
-      if (value.popupPresenter !== null) {
-        value.popupPresenter.destroy();
-        value.popupPresenter = null;
-        return;
-      }
+    if (this.popupPresenter !== null) {
+      this.popupPresenter.destroy();
+      this.popupPresenter = null;
     }
   };
+
+  #newPopupHandler = (film, comments) => {
+    this.#isPopupOpen();
+    this.popupPresenter = new PopupPresenter(this.#handleCardChange, this.#handleCommentChange);
+    this.popupPresenter.init(film, comments, siteMainElement);
+  };
+
+  #refreshPopup = (film, comments) => {
+    if (this.popupPresenter !== null) {
+      this.popupPresenter.destroy();
+      this.popupPresenter = null;
+      this.popupPresenter = new PopupPresenter(this.#handleCardChange, this.#handleCommentChange);
+      this.popupPresenter.init(film, comments, siteMainElement);
+    }
+  };
+
 
   #renderShowMoreButton = () => {
     if (this.filmCards.length > FILMS_COUNT_PER_ROW) {

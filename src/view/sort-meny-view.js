@@ -14,7 +14,6 @@ const createNavigationTemplate = (filters) => (
 );
 
 export default class SortMenuView extends AbstractStatefulView {
-  #prevActiveElments = null;
   currentActiveFilter = null;
   #initialState = {
     default: true,
@@ -92,8 +91,8 @@ export default class SortMenuView extends AbstractStatefulView {
   };
 
   #changeStateFilter = (evt) => {
-    this._callback.sortTypeChange(evt.target.dataset.filterType, true);
     this._state[3][evt.target.dataset.filterType] = !this._state[3][evt.target.dataset.filterType];
+    this._callback.sortTypeChange(evt.target.dataset.filterType, true);
     this._setState(this._state);
   };
 

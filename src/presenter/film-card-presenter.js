@@ -1,8 +1,5 @@
 import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
-import PopupPresenter from './popup-presenter.js';
-
-const siteMainElement = document.querySelector('.main');
 
 export default class FilmCardPresenter {
   #card = null;
@@ -12,11 +9,15 @@ export default class FilmCardPresenter {
   #changeCard = null;
   popupPresenter = null;
   #isPopupOpen = false;
+  #showPopup = null;
+  #refreshPopup = null;
 
-  constructor(filmsContainer, changeCard, isPopupOpen) {
+  constructor(filmsContainer, changeCard, isPopupOpen, showPopup, refreshPopup) {
     this.#filmsContainer = filmsContainer;
     this.#changeCard = changeCard;
     this.#isPopupOpen = isPopupOpen;
+    this.#showPopup = showPopup;
+    this.#refreshPopup = refreshPopup;
   }
 
   init(card, comments) {
@@ -29,23 +30,15 @@ export default class FilmCardPresenter {
   }
 
   #renderCard = (prevfilmCardView) => {
-    this.#filmCardView = new FilmCardView(this.#card);
-
-    const handleFilmCardClick = () => {
-      this.#isPopupOpen();
-      this.popupPresenter = new PopupPresenter(siteMainElement, this.#changeCard);
-      this.popupPresenter.init(this.#card, this.#comments);
-    };
+    this.#filmCardView = new FilmCardView(this.#card, this.#comments);
 
     if (prevfilmCardView === null) {
       render(this.#filmCardView, this.#filmsContainer.element);
     } else {
       replace(this.#filmCardView, prevfilmCardView);
-      if (this.popupPresenter !== null) {
-        this.popupPresenter.init(this.#card, this.#comments);
-      }
+      this.#refreshPopup(this.#card, this.#comments);
     }
-    this.#filmCardView.setClickHandler(handleFilmCardClick);
+    this.#filmCardView.setClickHandler(this.#showPopup);
   };
 
 
