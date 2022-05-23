@@ -231,7 +231,6 @@ export default class PopupView extends AbstractStatefulView {
     });
 
     document.addEventListener('keyup', (evt) => {
-      console.log(arrKeyCode);
       if (arrKeyCode.includes('ControlLeft') && arrKeyCode.includes('Enter') && arrKeyCode.includes(evt.code)) {
         arrKeyCode = [];
         const tempComment = generateComment();
