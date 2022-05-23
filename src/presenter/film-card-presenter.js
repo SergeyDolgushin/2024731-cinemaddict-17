@@ -8,14 +8,12 @@ export default class FilmCardPresenter {
   #filmCardView = null;
   #changeCard = null;
   popupPresenter = null;
-  #isPopupOpen = false;
   #showPopup = null;
   #refreshPopup = null;
 
-  constructor(filmsContainer, changeCard, isPopupOpen, showPopup, refreshPopup) {
+  constructor(filmsContainer, changeCard, showPopup, refreshPopup) {
     this.#filmsContainer = filmsContainer;
     this.#changeCard = changeCard;
-    this.#isPopupOpen = isPopupOpen;
     this.#showPopup = showPopup;
     this.#refreshPopup = refreshPopup;
   }

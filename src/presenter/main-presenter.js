@@ -166,7 +166,6 @@ export default class MainPresenter {
     this.#filmCardPresenter = new FilmCardPresenter(
       this.#filmsContainer,
       this.#handleCardChange,
-      this.#isPopupOpen,
       this.#newPopupHandler,
       this.#refreshPopup
     );
