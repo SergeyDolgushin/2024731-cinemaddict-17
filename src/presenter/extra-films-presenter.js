@@ -1,4 +1,5 @@
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
+import { sortRateDown, sortMostCommented } from '../utils/sorting.js';
 import ExtraFilmsContainerView from '../view/extra-container-view.js';
 import FilmView from '../view/film-card-view.js';
 
@@ -12,20 +13,52 @@ const mostCommented = {
   showMoreInstance: '',
 };
 
-const showMoreInstances = [topRated, mostCommented];
-
 export default class ExtraFilmsPresenter {
+  #filmCardsTopRated = null;
+  #filmCardsMostCommented = null;
+  #originalfilmCards = null;
+
   init = (mainContainer, filmsModel) => {
     this.mainContainer = mainContainer;
-    this.filmsModel = filmsModel;
-    this.filmCards = [...this.filmsModel];
+    this.#filmCardsTopRated = [...filmsModel];
+    this.#filmCardsMostCommented = [...filmsModel];
+    this.#originalfilmCards = [...filmsModel];
 
-    const mainSection = this.mainContainer.querySelector('.films');
-    for (const item of showMoreInstances) {
-      const showMoreInstance = new ExtraFilmsContainerView(item);
-      render(showMoreInstance, mainSection);
-      const placeShowMoreFilm = showMoreInstance.getElement(item).querySelector('.films-list__container');
-      render(new FilmView(this.filmCards[0]), placeShowMoreFilm);
+
+    if (this.#originalfilmCards.length > 0) {
+      this.#filmCardsTopRated.sort(sortRateDown);
+      this.#filmCardsMostCommented.sort(sortMostCommented);
+      const mainSection = this.mainContainer.querySelector('.films');
+      if (this.#filmCardsTopRated.length > 0) {
+        const extraContainerTopRated = this.#renderContainer(topRated, mainSection);
+        this.#renderTopRated(extraContainerTopRated);
+      }
+      if (this.#filmCardsMostCommented.length > 0) {
+        const extraContainerMostCommented = this.#renderContainer(mostCommented, mainSection);
+        this.#renderMostCommented(extraContainerMostCommented);
+      }
     }
   };
+
+  #renderTopRated = (extraContainer) => {
+    const placeShowMoreFilm = extraContainer.element.querySelector('.films-list__container');
+    this.#filmCardsTopRated.slice(0, 2).forEach((element) =>
+      render(new FilmView(element), placeShowMoreFilm)
+    );
+  };
+
+  #renderMostCommented = (extraContainer) => {
+    const placeShowMoreFilm = extraContainer.element.querySelector('.films-list__container');
+    this.#filmCardsMostCommented.slice(0, 2).forEach((element) =>
+      render(new FilmView(element), placeShowMoreFilm)
+    );
+  };
+
+  #renderContainer = (item, mainSection) => {
+    const extraContainer = new ExtraFilmsContainerView(item);
+    render(extraContainer, mainSection);
+
+    return extraContainer;
+  };
+
 }

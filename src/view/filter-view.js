@@ -1,27 +1,35 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { SortType } from '../const.js';
 
 const createFilterTemplate = () => (
   `<ul class="sort">
-    <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-    <li><a href="#" class="sort__button">Sort by date</a></li>
-    <li><a href="#" class="sort__button">Sort by rating</a></li>
+    <li><a href="#" class="sort__button sort__button--active" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>
+    <li><a href="#" class="sort__button" data-sort-type="${SortType.SORT_DATE}">Sort by date</a></li>
+    <li><a href="#" class="sort__button" data-sort-type="${SortType.SORT_RATE}">Sort by rating</a></li>
   </ul>`
 );
 
-export default class FiltersView {
-  getTemplate() {
+export default class FiltersView extends AbstractView {
+  #prevActiveElments = null;
+
+  get template() {
     return createFilterTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  setSortTypeChangeHandler = (callback) => {
+    this._callback.sortTypeChange = callback;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+  };
+
+  #sortTypeChangeHandler = (evt) => {
+    this.#prevActiveElments = document.querySelector('.sort__button--active');
+    if (evt.target.tagName !== 'A') {
+      return;
     }
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+    evt.preventDefault();
+    this.#prevActiveElments.classList.toggle('sort__button--active');
+    evt.target.classList.toggle('sort__button--active');
+    this._callback.sortTypeChange(evt.target.dataset.sortType);
+  };
 }
