@@ -1,5 +1,5 @@
 const FilterType = {
-  ALL: 'default',
+  ALL: 'All',
   WATCHLIST: 'watchlist',
   ALREADYWATCHED: 'alreadywatched',
   FAVORITE: 'favorite',
@@ -12,10 +12,22 @@ const SortType = {
 };
 
 const infoType = {
-  'default': 'There are no movies in our database',
+  'All': 'There are no movies in our database',
   'watchlist': 'There are no movies to watch now',
   'alreadywatched': 'There are no watched movies now',
   'favorite': 'There are no favorite movies now',
 };
 
-export { FilterType, SortType, infoType };
+const UserAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export { FilterType, SortType, infoType, UserAction, UpdateType };

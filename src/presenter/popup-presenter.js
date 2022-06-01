@@ -1,39 +1,53 @@
-import { render, remove, replace } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
 import PopupView from '../view/popup-view.js';
 
 export default class PopupPresenter {
   #card = null;
+  #commentsModel = null;
   #changeCard = null;
   #mainContainer = null;
   #popupView = null;
-  #changeComment = null;
+  #closePopupPresenter = null;
 
-  constructor(changeCard, changeComment) {
+  constructor(changeCard, closePopupPresenter) {
     this.#changeCard = changeCard;
-    this.#changeComment = changeComment;
+    this.#closePopupPresenter = closePopupPresenter;
+  }
+
+  get filmCard() {
+    return this.#card;
+  }
+
+  get filmComments() {
+    return this.#commentsModel;
   }
 
   init = (filmModel, commentsModel, mainContainer) => {
     this.#mainContainer = mainContainer;
     this.#card = filmModel;
-    this.commentsModel = commentsModel;
-    this.filmComments = [...this.commentsModel];
+    this.#commentsModel = commentsModel;
     const prevPopupView = this.#popupView;
     this.#renderPopup(prevPopupView);
     this.#popupView.setPreferenceButtons(this.#handleWatchlistClick, this.#handleAlreadyWatchedClick, this.#handleFavoriteClick);
+    this.#popupView.deleteButtonHandler(this.#handleDeleteClick);
+    this.#popupView.sendNewComment(this.#handleAddNewComment);
+
   };
 
   #renderPopup = (prevPopupView) => {
-    this.#popupView = new PopupView(this.#card, this.filmComments);
-    this.#popupView.sendNewComment(this.#changeComment);
+    this.#popupView = new PopupView(this.#card, this.#commentsModel);
     const handlePopupCloseButton = () => {
-      remove(this.#popupView);
+      this.#popupView.destroy();
+      this.#closePopupPresenter();
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        remove(this.#popupView);
+        this.#popupView.destroy();
+        this.#closePopupPresenter();
+        document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
@@ -48,21 +62,53 @@ export default class PopupPresenter {
   };
 
   destroy = () => {
-    remove(this.#popupView);
+    this.#popupView.destroy();
   };
 
   #handleFavoriteClick = () => {
     this.#card.filmInfo.userDetails.favorite = !this.#card.filmInfo.userDetails.favorite;
-    this.#changeCard({ ...this.#card });
+    this.#changeCard(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      { ...this.#card },
+    );
   };
 
   #handleWatchlistClick = () => {
     this.#card.filmInfo.userDetails.watchlist = !this.#card.filmInfo.userDetails.watchlist;
-    this.#changeCard({ ...this.#card });
+    this.#changeCard(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      { ...this.#card },
+    );
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#card.filmInfo.userDetails.alreadyWatched = !this.#card.filmInfo.userDetails.alreadyWatched;
-    this.#changeCard({ ...this.#card });
+    this.#changeCard(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      { ...this.#card },
+    );
+  };
+
+  #handleDeleteClick = (commentId) => {
+    this.#changeCard(
+      UserAction.DELETE_COMMENT,
+      UpdateType.MINOR,
+      { ...this.#card },
+      commentId,
+    );
+  };
+
+  #handleAddNewComment = (comment) => {
+    this.#card.comments.push(comment.id);
+
+    this.#changeCard(
+      UserAction.ADD_COMMENT,
+      UpdateType.MINOR,
+      { ...this.#card },
+      comment,
+    );
   };
 }

@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { SortType } from '../const.js';
 
-const createFilterTemplate = () => (
+const createSortButtonsTemplate = () => (
   `<ul class="sort">
     <li><a href="#" class="sort__button sort__button--active" data-sort-type="${SortType.DEFAULT}">Sort by default</a></li>
     <li><a href="#" class="sort__button" data-sort-type="${SortType.SORT_DATE}">Sort by date</a></li>
@@ -9,11 +9,11 @@ const createFilterTemplate = () => (
   </ul>`
 );
 
-export default class FiltersView extends AbstractView {
+export default class SortButtonsView extends AbstractView {
   #prevActiveElments = null;
 
   get template() {
-    return createFilterTemplate();
+    return createSortButtonsTemplate();
   }
 
   setSortTypeChangeHandler = (callback) => {
