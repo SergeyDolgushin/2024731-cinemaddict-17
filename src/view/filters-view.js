@@ -1,5 +1,3 @@
-import { generateFilter } from '../mock/filter.js';
-import { FilterType } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 const IS_ELEMENT_ACTIVE = 'main-navigation__item--active';
