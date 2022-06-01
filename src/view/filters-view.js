@@ -2,20 +2,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 const IS_ELEMENT_ACTIVE = 'main-navigation__item--active';
 
-// const createNavigationTemplate = (filter, currentFilterType) => {
-//   const { type, name, count } = filter;
-
-//   return (
-//     `<nav class="main-navigation">
-//       <a href="#all" class="main-navigation__item ${type === currentFilterType ? IS_ELEMENT_ACTIVE : ''}" data-filter-type="${name}">All movies</a>
-//       <a href="#watchlist" class="main-navigation__item ${type === currentFilterType ? IS_ELEMENT_ACTIVE : ''}" data-filter-type="${name}">Watchlist <span class="main-navigation__item-count" data-filter-type="${FilterType.WATCHLIST}">${count}</span></a>
-//       <a href="#history" class="main-navigation__item ${type === currentFilterType ? IS_ELEMENT_ACTIVE : ''}" data-filter-type="${FilterType.ALREADYWATCHED}">History <span class="main-navigation__item-count" data-filter-type="${FilterType.ALREADYWATCHED}">${count}</span></a>
-//       <a href="#favorites" class="main-navigation__item ${type === currentFilterType ? IS_ELEMENT_ACTIVE : ''}" data-filter-type="${FilterType.FAVORITE}">Favorites <span class="main-navigation__item-count" data-filter-type="${FilterType.FAVORITE}">${count}</span></a>
-//     </nav>`
-//   );
-// };
-
-
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const { type, name, count } = filter;
 
