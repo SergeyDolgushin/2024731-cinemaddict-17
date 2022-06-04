@@ -49,16 +49,19 @@ export default class FilmCardView extends AbstractView {
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.querySelector('.film-card__poster').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.film-card__poster')
+      .addEventListener('click', this.#clickHandler);
   };
 
-  #clickHandler = () => {
+  #clickHandler = (evt) => {
+    evt.stopPropagation();
     this._callback.click(this.#filmCard, this.#comments);
   };
 
   #setWatchlistHandler = (callback) => {
     this._callback.clickWatchList = callback;
-    this.element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this.#clickWatchlistHandler);
+    this.element.querySelector('.film-card__controls-item--add-to-watchlist')
+      .addEventListener('click', this.#clickWatchlistHandler);
   };
 
   #clickWatchlistHandler = () => {
@@ -87,5 +90,11 @@ export default class FilmCardView extends AbstractView {
     this.#setWatchlistHandler(cbWatchlist);
     this.#setWatchedHandler(cbWatched);
     this.#setFavoriteHandler(cbFavorite);
+  };
+
+  destroy = () => {
+    this.element.querySelector('.film-card__poster')
+      .removeEventListener('click', this.#clickHandler);
+    this.element.remove();
   };
 }

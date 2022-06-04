@@ -1,4 +1,5 @@
-import { render, remove, replace } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
+import { UserAction, UpdateType } from '../const.js';
 import FilmCardView from '../view/film-card-view.js';
 
 export default class FilmCardPresenter {
@@ -9,13 +10,13 @@ export default class FilmCardPresenter {
   #changeCard = null;
   popupPresenter = null;
   #showPopup = null;
-  #refreshPopup = null;
+  #filterType = null;
 
-  constructor(filmsContainer, changeCard, showPopup, refreshPopup) {
+  constructor(filmsContainer, changeCard, showPopup, filterType) {
     this.#filmsContainer = filmsContainer;
     this.#changeCard = changeCard;
     this.#showPopup = showPopup;
-    this.#refreshPopup = refreshPopup;
+    this.#filterType = filterType;
   }
 
   init(card, comments) {
@@ -34,28 +35,43 @@ export default class FilmCardPresenter {
       render(this.#filmCardView, this.#filmsContainer.element);
     } else {
       replace(this.#filmCardView, prevfilmCardView);
-      this.#refreshPopup(this.#card, this.#comments);
     }
     this.#filmCardView.setClickHandler(this.#showPopup);
   };
 
 
   destroy = () => {
-    remove(this.#filmCardView);
+    this.#filmCardView.destroy();
   };
+
+  #selectUpdateType = () => (this.#filterType !== 'All') ? UpdateType.MAJOR : UpdateType.MINOR;
+
 
   #handleFavoriteClick = () => {
     this.#card.filmInfo.userDetails.favorite = !this.#card.filmInfo.userDetails.favorite;
-    this.#changeCard({ ...this.#card });
+    this.#changeCard(
+      UserAction.UPDATE_FILM,
+      this.#selectUpdateType(),
+      { ...this.#card },
+    );
   };
 
   #handleWatchlistClick = () => {
     this.#card.filmInfo.userDetails.watchlist = !this.#card.filmInfo.userDetails.watchlist;
-    this.#changeCard({ ...this.#card });
+    this.#changeCard(
+      UserAction.UPDATE_FILM,
+      this.#selectUpdateType(),
+      { ...this.#card },
+    );
   };
 
   #handleAlreadyWatchedClick = () => {
     this.#card.filmInfo.userDetails.alreadyWatched = !this.#card.filmInfo.userDetails.alreadyWatched;
-    this.#changeCard({ ...this.#card });
+    this.#changeCard(
+      UserAction.UPDATE_FILM,
+      this.#selectUpdateType(),
+      { ...this.#card },
+    );
   };
+
 }
