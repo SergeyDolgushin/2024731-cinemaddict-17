@@ -28,6 +28,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+  UPDATE: 'UPDATE',
 };
 
 export { FilterType, SortType, infoType, UserAction, UpdateType };

@@ -1,15 +1,42 @@
 import Observable from '../framework/observable.js';
+import { UpdateType } from '../const.js';
+import { adaptToClient } from '../api/adapters.js';
 
 export default class CommentsModel extends Observable {
-  #comments = null;
+  #commentsApiService = null;
+  #comments = [];
 
-  constructor() {
+  constructor(commentsApiService) {
     super();
-    this.#comments = [];
+    this.#commentsApiService = commentsApiService;
   }
 
-  addComments = (comments) => {
-    this.#comments = [...this.comments, ...comments];
+  getFilmComments = async (filmId) => {
+    try {
+      const comments = await this.#commentsApiService.getComments(filmId);
+      this.#comments = [...comments];
+    } catch {
+      return [];
+    }
+
+    this._notify(UpdateType.PATCH, { 'filmId': filmId, 'filmComments': this.#comments });
+  };
+
+  addComment = async (updateType, filmId, comments) => {
+    let updatedData = null;
+    try {
+      updatedData = await this.#commentsApiService.updateComment(filmId, comments);
+      this.#comments = [...updatedData.comments];
+    } catch {
+      this.#comments = [];
+    }
+    this._notify(
+      updateType,
+      {
+        'film': adaptToClient(updatedData.movie),
+        'comments': this.#comments
+      }
+    );
   };
 
   get comments() {
@@ -17,16 +44,22 @@ export default class CommentsModel extends Observable {
     return this.#comments;
   }
 
-  addComment = (updateType, update) => {
-    this.#comments.push(update);
+  deleteComment = async (updateType, filmId, update) => {
+    const index = this.#comments.findIndex((comment) => Number(comment.id) === Number(update));
 
-    this._notify(updateType, update);
-  };
-
-  deleteComment = (updateType, update) => {
-    const index = this.#comments.findIndex((comment) => comment.id === Number(update));
-    this.#comments.splice(index, 1);
-
-    this._notify(updateType, update);
+    try {
+      await this.#commentsApiService.deleteComment(update);
+      this.#comments.splice(index, 1);
+      update = null;
+      this._notify(
+        updateType,
+        {
+          'comments': update,
+          'filmId': filmId
+        }
+      );
+    } catch (err) {
+      throw new Error('Can\'t delete task');
+    }
   };
 }

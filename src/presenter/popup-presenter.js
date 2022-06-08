@@ -5,14 +5,18 @@ import PopupView from '../view/popup-view.js';
 export default class PopupPresenter {
   #card = null;
   #commentsModel = null;
+  #comments = null;
   #changeCard = null;
   #mainContainer = null;
   #popupView = null;
   #closePopupPresenter = null;
+  #prevPopupView = null;
 
-  constructor(changeCard, closePopupPresenter) {
+
+  constructor(changeCard, closePopupPresenter, commentsModel) {
     this.#changeCard = changeCard;
     this.#closePopupPresenter = closePopupPresenter;
+    this.#commentsModel = commentsModel;
   }
 
   get filmCard() {
@@ -23,31 +27,42 @@ export default class PopupPresenter {
     return this.#commentsModel;
   }
 
-  init = (filmModel, commentsModel, mainContainer) => {
+  init = (filmModel, comments, mainContainer) => {
     this.#mainContainer = mainContainer;
     this.#card = filmModel;
-    this.#commentsModel = commentsModel;
-    const prevPopupView = this.#popupView;
+    this.#comments = comments;
+    this.#prevPopupView = this.#popupView;
+    this.#renderOrReplacePopup(this.#prevPopupView);
+  };
+
+  #handleModelEventReceiveComments = (comments, filmId) => {
+    this.#prevPopupView = this.#popupView;
+    if (this.#card.id === filmId) {
+      this.#comments = comments;
+      this.#popupView.removeHandlers();
+      this.#renderOrReplacePopup(this.#prevPopupView);
+    }
+  };
+
+  #renderOrReplacePopup = (prevPopupView) => {
     this.#renderPopup(prevPopupView);
     this.#popupView.setPreferenceButtons(this.#handleWatchlistClick, this.#handleAlreadyWatchedClick, this.#handleFavoriteClick);
     this.#popupView.deleteButtonHandler(this.#handleDeleteClick);
     this.#popupView.sendNewComment(this.#handleAddNewComment);
-
   };
 
   #renderPopup = (prevPopupView) => {
-    this.#popupView = new PopupView(this.#card, this.#commentsModel);
+    this.#popupView = new PopupView(this.#card, this.#comments, this.#commentsModel);
     const handlePopupCloseButton = () => {
-      this.#popupView.destroy();
+      this.destroy();
       this.#closePopupPresenter();
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        this.#popupView.destroy();
+        this.destroy();
         this.#closePopupPresenter();
-        document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
@@ -58,7 +73,7 @@ export default class PopupPresenter {
     }
 
     this.#popupView.setClickHandler(handlePopupCloseButton);
-    document.addEventListener('keydown', onEscKeyDown);
+    this.#popupView.setEscExitHandler(onEscKeyDown);
   };
 
   destroy = () => {
@@ -102,13 +117,40 @@ export default class PopupPresenter {
   };
 
   #handleAddNewComment = (comment) => {
-    this.#card.comments.push(comment.id);
-
     this.#changeCard(
       UserAction.ADD_COMMENT,
-      UpdateType.MINOR,
-      { ...this.#card },
-      comment,
+      UpdateType.UPDATE,
+      this.#card,
+      {
+        'emotion': comment.emotion,
+        'comment': comment.comment
+      },
     );
+  };
+
+  setSaving = () => {
+    this.#popupView.updateView({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setDeleting = () => {
+    this.#popupView.updateView({
+      isDisabled: true,
+      isDeleting: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetPopupState = () => {
+      this.#popupView.updateView({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#popupView.shake(resetPopupState);
   };
 }

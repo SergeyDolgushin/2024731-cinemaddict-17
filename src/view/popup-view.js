@@ -1,9 +1,8 @@
 import he from 'he';
 import { setActiveClass, humanizeDateTime } from '../utils.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { generateComment } from '../mock/films-comments.js';
 
-const createCommentTemplate = (film, comments) => {
+const createCommentTemplate = (film, comments, isDisabled, isDeleting) => {
   const listComments = [];
   comments.forEach((comment) => {
     if (film.comments.includes(comment.id)) {
@@ -17,7 +16,9 @@ const createCommentTemplate = (film, comments) => {
                 <p class="film-details__comment-info">
                   <span class="film-details__comment-author">${comment.author}</span>
                   <span class="film-details__comment-day">${humanizeDateTime(comment.date)}</span>
-                  <button type="button" class="film-details__comment-delete" data-id="${comment.id}">Delete</button>
+                  <button type="button" class="film-details__comment-delete" data-id="${comment.id} ${isDisabled ? 'disabled' : ''}">
+                    ${isDeleting ? 'Deleting...' : 'Delete'}
+                  </button>
                 </p>
               </div>
             </li>`
@@ -27,7 +28,7 @@ const createCommentTemplate = (film, comments) => {
   return listComments.join('');
 };
 
-const createPopupTemplate = (filmCard, listComments) => {
+const createPopupTemplate = (filmCard, listComments, isSaving, isDisabled) => {
   const activeClass = 'film-details__control-button--active';
   const userDetails = filmCard.filmInfo.userDetails;
 
@@ -64,11 +65,11 @@ const createPopupTemplate = (filmCard, listComments) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Writers</td>
-                <td class="film-details__cell">${filmCard.filmInfo.writers}</td>
+                <td class="film-details__cell">${filmCard.filmInfo.writers.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Actors</td>
-                <td class="film-details__cell">${filmCard.filmInfo.actors}</td>
+                <td class="film-details__cell">${filmCard.filmInfo.actors.join(', ')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
@@ -85,7 +86,7 @@ const createPopupTemplate = (filmCard, listComments) => {
               <tr class="film-details__row">
                 <td class="film-details__term">Genres</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">${filmCard.filmInfo.genre}</span>
+                  <span class="film-details__genre">${filmCard.filmInfo.genre.join(', ')}</span>
               </tr>
             </table>
             <p class="film-details__film-description">
@@ -108,7 +109,8 @@ const createPopupTemplate = (filmCard, listComments) => {
           <div class="film-details__new-comment">
             <div class="film-details__add-emoji-label"></div>
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>
+              ${isSaving ? 'Saving...' : ''}</textarea>
             </label>
             <div class="film-details__emoji-list">
               <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
@@ -139,27 +141,35 @@ const createPopupTemplate = (filmCard, listComments) => {
 export default class PopupView extends AbstractStatefulView {
   #filmCard = null;
   #filmComments = null;
+  #commentsModel = null;
   _state = null;
   #arrCode = [];
 
 
-  constructor(filmCard, filmsComments) {
+  constructor(filmCard, filmsComments, commentModel) {
     super();
     this.#filmCard = filmCard;
     this.#filmComments = filmsComments;
-    this._state = PopupView.parseDataToState(filmCard, filmsComments);
+    this.#commentsModel = commentModel;
+    this._state = PopupView.parseDataToState(filmCard, this.#filmComments, this.#commentsModel);
     this.#addCommentsHandlers();
   }
 
-  get template() {
-    const listComments = createCommentTemplate(this._state.film, this._state.comments);
 
-    return createPopupTemplate(this._state.film, listComments);
+  get template() {
+    const listComments = createCommentTemplate(this._state.film, this._state.comments, this._state.isDisabled, this._state.isDeleting);
+
+    return createPopupTemplate(this._state.film, listComments, this._state.isSaving, this._state.isDisabled);
   }
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#clickHandler);
+  };
+
+  setEscExitHandler = (callback) => {
+    this._callback.escExit = callback;
+    document.addEventListener('keydown', this.#escHandler);
   };
 
   setPreferenceButtons = (cbWatchlist, cbWatched, cbFavorite) => {
@@ -170,6 +180,10 @@ export default class PopupView extends AbstractStatefulView {
 
   #clickHandler = () => {
     this._callback.click();
+  };
+
+  #escHandler = (evt) => {
+    this._callback.escExit(evt);
   };
 
   #setWatchlistHandler = (callback) => {
@@ -233,14 +247,6 @@ export default class PopupView extends AbstractStatefulView {
     this._setState({
       emotion: evt.target.value,
     });
-
-
-    // const scrollPosition = this.element.scrollTop;
-
-    // this.updateElement(this._state.emotion);
-
-    // this.element.scrollTop = scrollPosition;
-
   };
 
 
@@ -254,7 +260,7 @@ export default class PopupView extends AbstractStatefulView {
   sendNewComment = (callback) => {
     this._callback.addComment = callback;
     document.addEventListener('keydown', this.#detectKeysPressed);
-    document.addEventListener('keyup', this.#addNewCommentHandler);
+    document.addEventListener('keyup', this.#addNewComment);
   };
 
   #detectKeysPressed = (evt) => {
@@ -269,7 +275,7 @@ export default class PopupView extends AbstractStatefulView {
   #addNewCommentHandler = (evt) => {
     if (this.#arrCode.includes('ControlLeft') && this.#arrCode.includes('Enter') && this.#arrCode.includes(evt.code)) {
       this.#arrCode = [];
-      const tempComment = generateComment();
+      const tempComment = {};
       tempComment.comment = this._state.comment;
       tempComment.emotion = this._state.emotion;
       this._setState({ ...tempComment });
@@ -278,8 +284,15 @@ export default class PopupView extends AbstractStatefulView {
   };
 
 
-  #addNewComment = () => {
-    this._callback.addComment(this._state);
+  #addNewComment = (evt) => {
+    if (this.#arrCode.includes('ControlLeft') && this.#arrCode.includes('Enter') && this.#arrCode.includes(evt.code)) {
+      this.#arrCode = [];
+      const tempComment = {};
+      tempComment.comment = this._state.comment;
+      tempComment.emotion = this._state.emotion;
+      this._setState({ ...tempComment });
+      this._callback.addComment(this._state);
+    }
   };
 
   #addCommentsHandlers = () => {
@@ -290,8 +303,10 @@ export default class PopupView extends AbstractStatefulView {
   };
 
   _restoreHandlers = () => {
+    this.deleteButtonHandler(this.#clickDeleteHandler);
     this.sendNewComment();
     this.#addCommentsHandlers();
+    this.#addNewComment();
     this.setClickHandler(this._callback.click);
     this.setPreferenceButtons(
       this._callback.clickWatchList,
@@ -300,16 +315,32 @@ export default class PopupView extends AbstractStatefulView {
     );
   };
 
+  updateView = (update) => {
+    const scrollPosition = this.element.scrollTop;
+    this.updateElement(update);
+    this.element.scrollTop = scrollPosition;
+  };
+
   destroy = () => {
     document.removeEventListener('keydown', this.#detectKeysPressed);
     document.removeEventListener('keyup', this.#addNewCommentHandler);
+    document.removeEventListener('keydown', this.#escHandler);
     this.element.remove();
+  };
+
+  removeHandlers = () => {
+    document.removeEventListener('keydown', this.#detectKeysPressed);
+    document.removeEventListener('keyup', this.#addNewCommentHandler);
+    document.removeEventListener('keydown', this.#escHandler);
   };
 
   static parseDataToState = (film, comments) => ({
     film,
     comments,
     emotion: null,
-    comment: null
+    comment: null,
+    isDeleting: false,
+    isDisabled: false,
+    isSaving: false,
   });
 }

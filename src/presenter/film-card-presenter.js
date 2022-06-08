@@ -4,7 +4,6 @@ import FilmCardView from '../view/film-card-view.js';
 
 export default class FilmCardPresenter {
   #card = null;
-  #comments = null;
   #filmsContainer = null;
   #filmCardView = null;
   #changeCard = null;
@@ -19,17 +18,19 @@ export default class FilmCardPresenter {
     this.#filterType = filterType;
   }
 
-  init(card, comments) {
+  init(card) {
     this.#card = card;
-    this.#comments = comments;
-
     const prevfilmCardView = this.#filmCardView;
     this.#renderCard(prevfilmCardView);
     this.#filmCardView.setPreferenceButtons(this.#handleWatchlistClick, this.#handleAlreadyWatchedClick, this.#handleFavoriteClick);
   }
 
+  get filmCard() {
+    return this.#card;
+  }
+
   #renderCard = (prevfilmCardView) => {
-    this.#filmCardView = new FilmCardView(this.#card, this.#comments);
+    this.#filmCardView = new FilmCardView(this.#card);
 
     if (prevfilmCardView === null) {
       render(this.#filmCardView, this.#filmsContainer.element);

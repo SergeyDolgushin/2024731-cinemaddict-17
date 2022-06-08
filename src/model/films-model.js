@@ -1,45 +1,56 @@
-import { generateFilmInfo } from '../mock/films-comments.js';
-import { getRandomInteger } from '../utils.js';
 import Observable from '../framework/observable.js';
-
-const MIN_QUANTITY_FILMS = 0;
-const MAX_QUANTITY_FILMS = 1;
+import { UpdateType } from '../const.js';
+import { adaptToClient } from '../api/adapters.js';
 
 export default class FilmCardsModel extends Observable {
-  #films = null;
-  constructor(CommentsModel) {
+  #filmsApiService = null;
+  #films = [];
+
+  constructor(filmsApiService) {
     super();
-    this.#films = Array.from(
-      {
-        length: getRandomInteger(MIN_QUANTITY_FILMS, MAX_QUANTITY_FILMS)
-      },
-      (_, index) => generateFilmInfo(index, CommentsModel)
-    );
+    this.#filmsApiService = filmsApiService;
   }
+
+  init = async () => {
+    try {
+      const films = await this.#filmsApiService.films;
+      this.#films = films.map(adaptToClient);
+    } catch (err) {
+      this.#films = [];
+      throw new Error('Can\'t update unexisting item');
+    }
+
+    this._notify(UpdateType.INIT);
+  };
 
   get films() {
 
     return this.#films;
   }
 
-  updateFilm = (updateType, update) => {
+  updateFilm = async (updateType, update) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting item');
     }
 
-    this.#films = [
-      ...this.#films.slice(0, index),
-      update,
-      ...this.#films.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
+    try {
+      const response = await this.#filmsApiService.updateFilm(update);
+      const updatedFilm = adaptToClient(response);
+      this.#films = [
+        ...this.#films.slice(0, index),
+        update,
+        ...this.#films.slice(index + 1),
+      ];
+      this._notify(updateType, updatedFilm);
+    } catch (err) {
+      throw new Error('Can\'t update task');
+    }
   };
 
   updateFilmComment = (updateType, filmUpdate, commentUpdate) => {
-    let index = filmUpdate.comments.findIndex((comment) => comment === Number(commentUpdate));
+    let index = filmUpdate.comments.findIndex((comment) => Number(comment) === Number(commentUpdate));
     filmUpdate.comments.splice(index, 1);
 
     index = this.#films.findIndex((film) => film.id === filmUpdate.id);
@@ -48,8 +59,36 @@ export default class FilmCardsModel extends Observable {
       filmUpdate,
       ...this.#films.slice(index + 1),
     ];
-
-    this._notify(updateType, filmUpdate);
   };
 
+  addFilmComment = (updateType, filmUpdate, commentUpdate) => {
+    filmUpdate.comments.push(commentUpdate);
+
+    const index = this.#films.findIndex((film) => film.id === filmUpdate.id);
+    this.#films = [
+      ...this.#films.slice(0, index),
+      filmUpdate,
+      ...this.#films.slice(index + 1),
+    ];
+  };
+
+
+  getUpdatedFilms = async (filmId) => {
+    try {
+      const films = await this.#filmsApiService.films;
+      this.#films = films.map(adaptToClient);
+    } catch (err) {
+      this.#films = [];
+      throw new Error('Can\'t update unexisting item');
+    }
+
+    this._notify(
+      UpdateType.MINOR,
+      {
+        'comments': null,
+        'filmId': filmId
+      }
+    );
+  };
 }
+
