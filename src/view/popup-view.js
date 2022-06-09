@@ -141,17 +141,15 @@ const createPopupTemplate = (filmCard, listComments, isSaving, isDisabled) => {
 export default class PopupView extends AbstractStatefulView {
   #filmCard = null;
   #filmComments = null;
-  #commentsModel = null;
   _state = null;
   #arrCode = [];
 
 
-  constructor(filmCard, filmsComments, commentModel) {
+  constructor(filmCard, filmsComments) {
     super();
     this.#filmCard = filmCard;
     this.#filmComments = filmsComments;
-    this.#commentsModel = commentModel;
-    this._state = PopupView.parseDataToState(filmCard, this.#filmComments, this.#commentsModel);
+    this._state = PopupView.parseDataToState(filmCard, this.#filmComments);
     this.#addCommentsHandlers();
   }
 
@@ -319,6 +317,10 @@ export default class PopupView extends AbstractStatefulView {
     const scrollPosition = this.element.scrollTop;
     this.updateElement(update);
     this.element.scrollTop = scrollPosition;
+  };
+
+  updateState = (update) => {
+    this._setState(update);
   };
 
   destroy = () => {

@@ -153,4 +153,11 @@ export default class PopupPresenter {
 
     this.#popupView.shake(resetPopupState);
   };
+
+  updateStateView = (film, comments) => {
+    this.#popupView.updateState({
+      film: film[0],
+      comments,
+    });
+  };
 }

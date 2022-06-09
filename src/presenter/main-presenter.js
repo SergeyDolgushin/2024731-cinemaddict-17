@@ -7,6 +7,7 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import FilmsSectionView from '../view/main-films-section-view.js';
 import FilmsListSectionView from '../view/films-list-section-view.js';
 import FilmsListContainerView from '../view/films-list-container-view.js';
+import UserProfileView from '../view/user-profile-view.js';
 import ExtraFilmsPresenter from './extra-films-presenter.js';
 import PopupPresenter from './popup-presenter.js';
 import SortButtonsView from '../view/sort-buttons-view.js';
@@ -15,6 +16,7 @@ import LoadingView from '../view/loading-view.js';
 
 const FILMS_COUNT_PER_ROW = 5;
 const siteMainElement = document.querySelector('.main');
+const siteHeaderElement = document.querySelector('.header');
 
 export default class MainPresenter {
   #mainFilmsSection = new FilmsSectionView();
@@ -24,6 +26,7 @@ export default class MainPresenter {
   #SortButtons = new SortButtonsView();
   #extraFilmsPresenter = new ExtraFilmsPresenter();
   #loadingComponent = new LoadingView();
+  #userProfileView = new UserProfileView();
   #filmCardPresenter = null;
   #filmPresenter = new Map();
   #currentCountFilms = FILMS_COUNT_PER_ROW;
@@ -37,6 +40,7 @@ export default class MainPresenter {
   #filterModel = null;
   #openPresenter = null;
   #isLoading = true;
+  #prevUserProfile = null;
 
   constructor(filmsModel, commentsModel, filterModel) {
     this.#filmCardsModel = filmsModel;
@@ -79,21 +83,19 @@ export default class MainPresenter {
         this.popupPresenter.setSaving();
         try {
           await this.#commentsModel.addComment(updateType, filmUpdate.id, commentUpdate);
-          this.#filmCardsModel.addFilmComment(updateType, filmUpdate, commentUpdate);
         } catch (err) {
+          console.log(err);
           this.popupPresenter.setAborting();
         }
-        // this.#filmCardsModel.getUpdatedFilms(filmUpdate);
         break;
       case UserAction.DELETE_COMMENT:
         this.popupPresenter.setDeleting();
         try {
           await this.#commentsModel.deleteComment(updateType, filmUpdate.id, commentUpdate);
-          this.#filmCardsModel.updateFilmComment(updateType, filmUpdate, commentUpdate);
         } catch (err) {
+          console.log(err);
           this.popupPresenter.setAborting();
         }
-        // this.#filmCardsModel.updateFilmComment(updateType, filmUpdate, commentUpdate);
         break;
     }
   };
@@ -106,6 +108,8 @@ export default class MainPresenter {
         }
         break;
       case UpdateType.UPDATE:
+        this.#filmCardsModel.addFilmComment(updateType, data.film, data.commentId);
+        this.popupPresenter.updateStateView(this.#filmCardsModel.getFilmById(data.film.id), this.comments);
         if (this.popupPresenter !== null) {
           this.#rerenderPopup(data.film);
         }
@@ -113,8 +117,10 @@ export default class MainPresenter {
         this.#extraFilmsPresenter.init(siteMainElement, this.films);
         break;
       case UpdateType.MINOR:
-        if (data.comments === null) {
+        if (data.status === 'delete') {
           const tempData = this.films.filter((film) => film.id === data.filmId);
+          this.#filmCardsModel.updateFilmComment(updateType, tempData, data.comments);
+          this.popupPresenter.updateStateView(tempData, this.comments);
           data = tempData[0];
         }
         this.#filmPresenter.get(data.id).init(data);
@@ -126,12 +132,14 @@ export default class MainPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearFilmsList({ resetRenderedFilmsCount: true, resetSortType: true });
+        this.#renderUserProfile();
         this.#renderFilmsList();
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderFilmsList();
+        this.#renderUserProfile();
         break;
     }
   };
@@ -140,7 +148,23 @@ export default class MainPresenter {
     this.mainContainer = mainContainer;
     this.#emptyListView = new EmptyListView(this.#filterModel.filter);
     this.#emptyListView.init();
+    this.#renderUserProfile();
     this.#renderFilmsList();
+  };
+
+  #renderUserProfile = () => {
+    if (this.#prevUserProfile === null) {
+      this.#renderUserProfileView();
+    } else {
+      remove(this.#userProfileView);
+      this.#renderUserProfileView();
+    }
+    this.#prevUserProfile = this.#userProfileView;
+  };
+
+  #renderUserProfileView = () => {
+    this.#userProfileView.init(this.#isLoading, this.films);
+    render(this.#userProfileView, siteHeaderElement);
   };
 
   #handleShowMoreButtonClick = () => {
@@ -276,7 +300,7 @@ export default class MainPresenter {
 
   #rerenderPopup = (film) => {
     this.#closeOpenPopup();
-    this.popupPresenter = new PopupPresenter(this.#handleViewAction, this.#isPopupOpen, this.#commentsModel.comments);
+    this.popupPresenter = new PopupPresenter(this.#handleViewAction, this.#isPopupOpen, this.comments);
     this.popupPresenter.init(film, this.comments, siteMainElement);
   };
 

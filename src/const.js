@@ -32,4 +32,11 @@ const UpdateType = {
   UPDATE: 'UPDATE',
 };
 
-export { FilterType, SortType, infoType, UserAction, UpdateType };
+const UserRaiting = {
+  NONE: '',
+  NOVICE: 'novice',
+  FAN: 'fan',
+  BUFF: 'movie buff',
+};
+
+export { FilterType, SortType, infoType, UserAction, UpdateType, UserRaiting };

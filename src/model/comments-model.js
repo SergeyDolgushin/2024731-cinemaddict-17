@@ -22,10 +22,10 @@ export default class CommentsModel extends Observable {
     this._notify(UpdateType.PATCH, { 'filmId': filmId, 'filmComments': this.#comments });
   };
 
-  addComment = async (updateType, filmId, comments) => {
+  addComment = async (updateType, filmId, commentId) => {
     let updatedData = null;
     try {
-      updatedData = await this.#commentsApiService.updateComment(filmId, comments);
+      updatedData = await this.#commentsApiService.updateComment(filmId, commentId);
       this.#comments = [...updatedData.comments];
     } catch {
       this.#comments = [];
@@ -34,7 +34,8 @@ export default class CommentsModel extends Observable {
       updateType,
       {
         'film': adaptToClient(updatedData.movie),
-        'comments': this.#comments
+        'comments': this.#comments,
+        'commentId': commentId,
       }
     );
   };
@@ -50,16 +51,16 @@ export default class CommentsModel extends Observable {
     try {
       await this.#commentsApiService.deleteComment(update);
       this.#comments.splice(index, 1);
-      update = null;
-      this._notify(
-        updateType,
-        {
-          'comments': update,
-          'filmId': filmId
-        }
-      );
     } catch (err) {
       throw new Error('Can\'t delete task');
     }
+    this._notify(
+      updateType,
+      {
+        'comments': update,
+        'filmId': filmId,
+        'status': 'delete',
+      }
+    );
   };
 }

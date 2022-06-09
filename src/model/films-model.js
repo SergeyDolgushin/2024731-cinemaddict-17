@@ -90,5 +90,8 @@ export default class FilmCardsModel extends Observable {
       }
     );
   };
+
+  getFilmById = (filmId) => this.#films.filter((film) => film.id === filmId);
+
 }
 
