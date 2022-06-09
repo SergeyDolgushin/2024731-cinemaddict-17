@@ -84,7 +84,7 @@ export default class MainPresenter {
         try {
           await this.#commentsModel.addComment(updateType, filmUpdate.id, commentUpdate);
         } catch (err) {
-          console.log(err);
+          // console.log(err);
           this.popupPresenter.setAborting();
         }
         break;
@@ -93,7 +93,7 @@ export default class MainPresenter {
         try {
           await this.#commentsModel.deleteComment(updateType, filmUpdate.id, commentUpdate);
         } catch (err) {
-          console.log(err);
+          // console.log(err);
           this.popupPresenter.setAborting();
         }
         break;
