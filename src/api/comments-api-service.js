@@ -7,7 +7,7 @@ export default class CommentsApiService extends ApiService {
     .then(ApiService.parseResponse);
 
 
-  updateComment = async (filmId, comment) => {
+  addComment = async (filmId, comment) => {
     const response = await this._load({
       url: `comments/${filmId}`,
       method: Method.POST,

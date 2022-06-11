@@ -5,6 +5,13 @@ const FilterType = {
   FAVORITE: 'favorite',
 };
 
+const FilterName = {
+  'All': 'All',
+  'watchlist': 'Watchlist',
+  'alreadywatched': 'History',
+  'favorite': 'Favorites',
+};
+
 const SortType = {
   DEFAULT: 'default',
   SORT_DATE: 'date',
@@ -22,6 +29,7 @@ const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
   ADD_COMMENT: 'ADD_COMMENT',
   DELETE_COMMENT: 'DELETE_COMMENT',
+  CLOSE_POPUP: 'CLOSE_POPUP',
 };
 
 const UpdateType = {
@@ -30,6 +38,7 @@ const UpdateType = {
   MAJOR: 'MAJOR',
   INIT: 'INIT',
   UPDATE: 'UPDATE',
+  INIT_COMMENT: 'INIT_COMMENT',
 };
 
 const UserRaiting = {
@@ -39,4 +48,4 @@ const UserRaiting = {
   BUFF: 'movie buff',
 };
 
-export { FilterType, SortType, infoType, UserAction, UpdateType, UserRaiting };
+export { FilterType, SortType, infoType, UserAction, UpdateType, UserRaiting, FilterName };

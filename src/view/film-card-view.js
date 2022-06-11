@@ -58,9 +58,10 @@ export default class FilmCardView extends AbstractView {
   #filmCard = null;
   #comments = null;
 
-  constructor(filmCard) {
+  constructor(filmCard, comments) {
     super();
     this.#filmCard = filmCard;
+    this.#comments = comments;
   }
 
   get template() {
@@ -75,7 +76,7 @@ export default class FilmCardView extends AbstractView {
 
   #clickHandler = (evt) => {
     evt.stopPropagation();
-    this._callback.click(this.#filmCard, this.#comments);
+    this._callback.click(this.#filmCard);
   };
 
   #setWatchlistHandler = (callback) => {

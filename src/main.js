@@ -6,6 +6,7 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import FilmsApiService from './api/films-api-service.js';
 import CommentsApiService from './api/comments-api-service.js';
 
+
 const AUTHORIZATION = 'Basic h6fS3wl1s5j';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
