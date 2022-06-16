@@ -1,5 +1,26 @@
+import dayjs from 'dayjs';
 import { setActiveClass } from '../utils.js';
 import AbstractView from '../framework/view/abstract-view.js';
+
+const DESCRIPTION_MAX_LENGTH = 140;
+const RELEASE_DATE_FORMAT = 'YYYY';
+
+const formatDescription = (string, maxLength = 140) => {
+  if (string.length > maxLength) {
+    return string.replace(string.substring(maxLength - 1), '...');
+  }
+  return string;
+};
+
+const convertTimeDuration = (minute) => {
+
+  const hourDuration = Math.floor(minute / 60);
+  const minuteDuration = minute % 60;
+
+  return `${hourDuration}h ${minuteDuration}m`;
+};
+
+const formatDate = (date, format) => dayjs(date).format(format);
 
 const createFilmsTemplate = (filmCard) => {
   const activeClass = 'film-card__controls-item--active';
@@ -16,12 +37,12 @@ const createFilmsTemplate = (filmCard) => {
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${release.date}</span>
-          <span class="film-card__duration">${runtime}</span>
-          <span class="film-card__genre">${genre}</span>
+          <span class="film-card__year">${formatDate(release.date, RELEASE_DATE_FORMAT)}</span>
+          <span class="film-card__duration">${convertTimeDuration(runtime)}</span>
+          <span class="film-card__genre">${genre.join(', ')}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${description}</p>
+        <p class="film-card__description">${formatDescription(description, DESCRIPTION_MAX_LENGTH)}</p>
         <span class="film-card__comments">${filmCard.comments.length} comments</span>
       </a>
       <div class="film-card__controls">
@@ -55,7 +76,7 @@ export default class FilmCardView extends AbstractView {
 
   #clickHandler = (evt) => {
     evt.stopPropagation();
-    this._callback.click(this.#filmCard, this.#comments);
+    this._callback.click(this.#filmCard);
   };
 
   #setWatchlistHandler = (callback) => {

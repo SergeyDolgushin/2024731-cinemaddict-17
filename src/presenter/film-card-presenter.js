@@ -28,6 +28,10 @@ export default class FilmCardPresenter {
     this.#filmCardView.setPreferenceButtons(this.#handleWatchlistClick, this.#handleAlreadyWatchedClick, this.#handleFavoriteClick);
   }
 
+  getComments = (comments) => {
+    this.#comments = comments;
+  };
+
   #renderCard = (prevfilmCardView) => {
     this.#filmCardView = new FilmCardView(this.#card, this.#comments);
 
@@ -44,7 +48,7 @@ export default class FilmCardPresenter {
     this.#filmCardView.destroy();
   };
 
-  #selectUpdateType = () => (this.#filterType !== 'All') ? UpdateType.MAJOR : UpdateType.MINOR;
+  #selectUpdateType = () => (this.#filterType === 'All') ? UpdateType.MAJOR : UpdateType.PATCH;
 
 
   #handleFavoriteClick = () => {

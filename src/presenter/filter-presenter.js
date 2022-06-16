@@ -7,6 +7,7 @@ export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #filmsModel = null;
+  #isLoading = true;
 
   #filterComponent = null;
 
@@ -20,7 +21,7 @@ export default class FilterPresenter {
   }
 
   get filters() {
-    const films = this.#filmsModel.films;
+    const films = this.#isLoading ? [] : this.#filmsModel.films;
 
     return [
       {
@@ -63,6 +64,7 @@ export default class FilterPresenter {
   };
 
   #handleModelEvent = () => {
+    this.#isLoading = false;
     this.init();
   };
 

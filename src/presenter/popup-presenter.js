@@ -9,6 +9,7 @@ export default class PopupPresenter {
   #mainContainer = null;
   #popupView = null;
   #closePopupPresenter = null;
+  #prevPopupView = null;
 
   constructor(changeCard, closePopupPresenter) {
     this.#changeCard = changeCard;
@@ -27,41 +28,47 @@ export default class PopupPresenter {
     this.#mainContainer = mainContainer;
     this.#card = filmModel;
     this.#commentsModel = commentsModel;
-    const prevPopupView = this.#popupView;
-    this.#renderPopup(prevPopupView);
+    this.#prevPopupView = this.#popupView;
+    this.#renderPopup();
     this.#popupView.setPreferenceButtons(this.#handleWatchlistClick, this.#handleAlreadyWatchedClick, this.#handleFavoriteClick);
     this.#popupView.deleteButtonHandler(this.#handleDeleteClick);
     this.#popupView.sendNewComment(this.#handleAddNewComment);
 
   };
 
-  #renderPopup = (prevPopupView) => {
+  #renderPopup = () => {
+    let scrollPosition = 0;
+    if (this.#prevPopupView !== null) {
+      scrollPosition = this.#popupView.scrollPosition;
+    }
     this.#popupView = new PopupView(this.#card, this.#commentsModel);
     const handlePopupCloseButton = () => {
-      this.#popupView.destroy();
+      this.destroy();
       this.#closePopupPresenter();
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        this.#popupView.destroy();
+        this.destroy();
         this.#closePopupPresenter();
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    if (prevPopupView === null) {
+    if (this.#prevPopupView === null) {
       render(this.#popupView, this.#mainContainer);
     } else {
-      replace(this.#popupView, prevPopupView);
+      replace(this.#popupView, this.#prevPopupView);
+      this.#popupView = scrollPosition;
     }
 
     this.#popupView.setClickHandler(handlePopupCloseButton);
-    document.addEventListener('keydown', onEscKeyDown);
+    this.#popupView.setEscExitHandler(onEscKeyDown);
   };
 
   destroy = () => {
+    this.#handleClosePopup();
     this.#popupView.destroy();
   };
 
@@ -102,13 +109,46 @@ export default class PopupPresenter {
   };
 
   #handleAddNewComment = (comment) => {
-    this.#card.comments.push(comment.id);
-
     this.#changeCard(
       UserAction.ADD_COMMENT,
-      UpdateType.MINOR,
-      { ...this.#card },
-      comment,
+      UpdateType.UPDATE,
+      this.#card,
+      {
+        'emotion': comment.emotion,
+        'comment': comment.comment
+      },
     );
+  };
+
+  #handleClosePopup = () => {
+    this.#changeCard(
+      UserAction.CLOSE_POPUP,
+    );
+  };
+
+  setDeleting = () => {
+    this.#popupView.updateView({
+      isDisabled: true,
+      isDeleting: true,
+    });
+  };
+
+  setSaving = () => {
+    this.#popupView.updateView({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetPopupState = () => {
+      this.#popupView.updateView({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#popupView.shake(resetPopupState);
   };
 }

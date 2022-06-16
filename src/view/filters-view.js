@@ -1,4 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { FilterName } from '../const.js';
 
 const IS_ELEMENT_ACTIVE = 'main-navigation__item--active';
 
@@ -7,7 +8,7 @@ const createFilterItemTemplate = (filter, currentFilterType) => {
 
   return (
     `<a href="#${name}" class="main-navigation__item ${type === currentFilterType ? IS_ELEMENT_ACTIVE : ''}" data-filter-type="${name}">
-    Watchlist
+    ${FilterName[type]}
     <span class="main-navigation__item-count" data-filter-type="${name}">${count}
     </span>
     </a>`
